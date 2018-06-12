@@ -1,0 +1,90 @@
+<!-- Begin Hearst analytics -->
+<script type="text/javascript">
+    var omni_channelPath = "<%= json.project.hearst_category %> :: Special Projects";
+    var omni_title = "<%= json.project.title %>";
+    var omni_className = "channel";
+    var omni_paywallSite = "1";
+    var omni_publicationDate = "<%= json.project.date %> 00:00:00";
+    var omni_authorName = "<%= json.project.author %>";
+    var omni_authorTitle = "San Francisco Chronicle staff";
+    var HDN = HDN || {};
+    HDN.dataLayer = HDN.dataLayer || {};
+
+    // HDN.dataLayer object for content and href data
+    HDN.dataLayer.content = HDN.dataLayer.content || {};
+    HDN.dataLayer.href = HDN.dataLayer.href || {};
+    HDN.dataLayer.content.title = "<%= json.project.title %>";
+    HDN.dataLayer.content.subtitle = "";
+    HDN.dataLayer.content.objectId = "";
+    HDN.dataLayer.content.objectType = "channel";
+    HDN.dataLayer.content.sectionPath = ['<%= json.project.hearst_category %>', 'Special Projects'];
+    HDN.dataLayer.content.pubDate = "<%= json.project.date %> 00:00:00";
+    HDN.dataLayer.content.wordCount = "";
+    HDN.dataLayer.content.keywords = [];
+    HDN.dataLayer.content.keySubjects = [];
+    HDN.dataLayer.content.keyPersons = [];
+    HDN.dataLayer.content.keyOrganizations = [];
+    HDN.dataLayer.content.keyConcepts = [];
+    HDN.dataLayer.content.keyCategories = [];
+    HDN.dataLayer.content.keyPlaces = [];
+    HDN.dataLayer.content.keyNlpPerson = [];
+    HDN.dataLayer.content.keyNlpLocation = [];
+    HDN.dataLayer.content.keyNlpOrganization = [];
+    HDN.dataLayer.content.keyNlpEvent = [];
+    HDN.dataLayer.content.keyNlpWorkOfArt = [];
+    HDN.dataLayer.content.keyNlpConsumerGood = [];
+    HDN.dataLayer.content.keyNlpOther = [];
+    HDN.dataLayer.content.keyNlpUnknown = [];
+
+    // HDN.dataLayer object for source information
+    HDN.dataLayer.source = HDN.dataLayer.source || {};
+    HDN.dataLayer.source.authorName = "<%= json.project.author %>";
+    HDN.dataLayer.source.authorTitle = "San Francisco Chronicle Staff";
+    HDN.dataLayer.source.originalSourceSite = "SF";
+    HDN.dataLayer.source.publishingSite = "premiumsfgate";
+    HDN.dataLayer.source.sourceSite = "sfgate";
+    
+    // HDN.dataLayer object for sharing information
+    HDN.dataLayer.sharing = HDN.dataLayer.sharing || {};
+    HDN.dataLayer.sharing.openGraphUrl = "<%= json.project.url + json.project.slug%>";
+    HDN.dataLayer.sharing.openGraphType = "article";
+
+    HDN.dataLayer.href.pageUrl = "<%= json.project.url + json.project.slug%>";
+    HDN.dataLayer.href.canonicalUrl = "<%= json.project.url + json.project.slug%>";
+    HDN.dataLayer.href.pageUrlPath = window.location.pathname;
+    HDN.dataLayer.href.pageUrlPathFolders = window.location.pathname.replace(/[A-Za-z0-9-_.]+$/, '');
+    HDN.dataLayer.href.pageUrlQueryParams = window.location.search.replace(/^\?/, '');
+    HDN.dataLayer.href.pageUrlHash = window.location.hash;
+
+    // HDN.dataLayer object for presentation information
+    HDN.dataLayer.presentation = HDN.dataLayer.presentation || {};
+    HDN.dataLayer.presentation.hasSlideshow = "";
+    HDN.dataLayer.presentation.hasSlideshowListView = "";
+    HDN.dataLayer.presentation.hasVideo = "";
+    HDN.dataLayer.presentation.hasInteractive = "";
+
+    // HDN.dataLayer object for paywall information
+    HDN.dataLayer.paywall = HDN.dataLayer.paywall || {};
+    HDN.dataLayer.paywall.premiumStatus = "isPremium";
+    HDN.dataLayer.paywall.premiumEndDate = "";
+    HDN.dataLayer.paywall.policy = "<%= json.project.paywall %>";
+</script>
+<!-- End Hearst analytics -->
+
+<!-- Hearst analytics: Ensighten -->
+<script type="text/javascript">
+  (function(e) {
+    var t = '//nexus.ensighten.com/hearst/news/Bootstrap.js';
+    if (e.cookie.indexOf("nsghtn") > -1) {
+      if(e.cookie.indexOf("nsghtn=test-dev") > -1) {
+      console.log("Ensighten :: Test-Dev"); t = "//nexus-test.ensighten.com/hearst/news-dev/Bootstrap.js";
+      } else if(e.cookie.indexOf("nsghtn=test") > -1) {
+      console.log("Ensighten :: Test"); t = "//nexus-test.ensighten.com/hearst/news/Bootstrap.js";
+      } else if(e.cookie.indexOf("nsghtn=dev") > -1) {
+      console.log("Ensighten :: Dev"); t = "//nexus.ensighten.com/hearst/news-dev/Bootstrap.js";
+      }
+    }
+    e.write("<scr"+"ipt src='"+e.location.protocol+t+"'></scr"+"ipt>");
+  })(document);
+</script>
+<!-- End Hearst analytics: Ensighten -->
