@@ -12,12 +12,12 @@ var url = require("url");
 module.exports = function(grunt) {
 
   grunt.loadNpmTasks("grunt-contrib-connect");
-  
+
   grunt.config.merge({
     connect: {
       dev: {
         options: {
-          hostname: "localhost",
+          hostname: "0.0.0.0",
           livereload: true,
           base: "./build",
           //middleware to protect against case-insensitive file systems

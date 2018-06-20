@@ -28,8 +28,13 @@
 
   <div class="button-container">
     <div class="button" id="airquality">See up-to-date air quality</div>
+    <div class="popup" id="popup-airquality-explanation"><i class="fa fa-hand-o-right"></i>What is air quality data?</div>
   </div>
   <div class="timestamp"><span id="airDate"></span></div>
+
+  <div class="button-container">
+    <div class="popup" id="popup-nasa-explanation"><i class="fa fa-hand-o-right"></i>What are the fire perimeters?</div>
+  </div>
 
 
   <div id="list-of-fires" class="list-of-fires"></div>
@@ -48,6 +53,15 @@
   <div class="swath red-swath1"></div>
   <div class="swath red-swath0"></div>
   <div class="swath-text right">Hazardous</div>
+</div>
+
+<div class="overlay-aboutthedata" id="aboutthedata-overlay">
+  <div class="aboutthedata-box" id="aboutthedata-box">
+    <div class="close-button" id="close-data-box"><i class="fa fa-times" aria-hidden="true"></i></div>
+    <div id="about-airquality" class="aboutdata hide"><%=t.include("partials/_about_berkeleyair.html") %></div>
+    <div id="about-nasa" class="aboutdata hide"><%=t.include("partials/_about_nasa.html") %></div>
+    <div id="about-noaa" class="aboutdata hide"><%=t.include("partials/_about_noaa.html") %></div>
+  </div>
 </div>
 
 <script src="https://extras.sfgate.com/editorial/wildfires/overtime/data.json?3"></script>
