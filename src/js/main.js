@@ -218,17 +218,99 @@ var drawMap = function(fire_data) {
 
 // load NASA data -----------------------------------------------------------------------------------------------
 
-var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-06-15.sim.json";
-var nasa_timer;
-var layers = [];
+var now = new Date();
+console.log(now);
+var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var monthName = months[now.getMonth()];
+var month = now.getMonth()+1;
+var daynum = now.getDate()+1;
 
-d3.json(nasaDataURL).then(function(nasa){
-  console.log(nasa);
+function zeroFill( number, width ){
+  width -= number.toString().length;
+  if ( width > 0 )
+  {
+    return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
+  }
+  return number + ""; // always return a string
+}
+
+for (var idx=12; idx<daynum; idx++) {
+
+  var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(month,2)+"-"+zeroFill(idx,2)+".sim.json";
+  console.log(nasaDataURL);
+  var nasa_timer;
+  var layers = [];
+  var layerstoggle = [];
   var daystyle = {"color": "#F2A500","fill-opacity": 0.4,"weight": 3};
-  // tempstyle = {"color": colorsList[i],"fill-opacity": 0.8,"weight": 3};
-  layers = L.geoJSON(nasa,{style: daystyle}).addTo(map);
-});
+  var nowstyle = {"color": "#D94100","fill-opacity": 0.8,"weight": 3};
 
+  if (idx == daynum-1){
+    d3.json(nasaDataURL).then(function(nasa){
+      var daystyle = {"color": "#F2A500","fill-opacity": 0.4,"weight": 3};
+      layers.push(L.geoJSON(nasa,{style: nowstyle}).addTo(map));
+      layerstoggle.push(1);
+    });
+  } else {
+    d3.json(nasaDataURL).then(function(nasa){
+      var daystyle = {"color": "#F2A500","fill-opacity": 0.4,"weight": 3};
+      layers.push(L.geoJSON(nasa,{style: daystyle}).addTo(map));
+      layerstoggle.push(1);
+    });
+  }
+
+  var buttonSTR = "<span class='monthname'>"+monthName+"</span>";
+  for (var i=12; i<daynum; i++){
+    if (i == (daynum-1)) {
+      // when we have a variable number of days, use this ---->
+      buttonSTR += "<div class='now day"+i+" button clickbutton nowbutton active' id='day"+i+"button'>Today</div>";
+    } else {
+      buttonSTR += "<div class='day day"+i+" button clickbutton calendarbutton active' id='day"+i+"button'>"+i+"</div>";
+    }
+  }
+  document.getElementById("button-collection").innerHTML = buttonSTR;
+
+  // turning these calendar buttons into actual buttons
+  var dayB;
+  for (var t = 12; t < daynum; t++){
+    dayB = document.getElementById("day"+t+"button");
+    (function (dayB) {
+      dayB.addEventListener('click', function(){
+        var IDX = dayB.id.split("day")[1].split("button")[0] - 12;
+        var IDXdate = dayB.id.split("day")[1].split("button")[0];
+        console.log(IDX);
+        console.log(layers);
+        console.log(layerstoggle);
+        if (layerstoggle[IDX] == 1) {
+          map.removeLayer(layers[IDX]);
+          layerstoggle[IDX] = 0;
+          dayB.classList.remove("active");
+        } else {
+          if (IDX == (daynum-1)){
+            var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(month,2)+"-"+zeroFill(IDXdate,2)+".sim.json";
+            d3.json(nasaDataURL).then(function(nasa){
+              layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
+            });
+            layerstoggle[IDX] = 1;
+            // layers[IDX] = L.geoJSON(JSON.parse(sortedFireData[IDX]["json"]),{style: nowstyle}).addTo(map);
+          } else {
+            console.log("emma gotta fix this too");
+            var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(month,2)+"-"+zeroFill(IDXdate,2)+".sim.json";
+            d3.json(nasaDataURL).then(function(nasa){
+              layers[IDX] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
+            });
+            layerstoggle[IDX] = 1;
+            // layers[IDX] = L.geoJSON(JSON.parse(sortedFireData[IDX]["json"]),{style: daystyle}).addTo(map);
+          }
+          console.log(layers);
+          console.log(layerstoggle);
+          layerstoggle[IDX] = 1;
+          dayB.classList.add("active");
+        }
+      });
+    })(dayB);
+  }
+
+}
 
 // air quality layer ----------------------------------------------------------------------
 var pollution_toggle = 0;
