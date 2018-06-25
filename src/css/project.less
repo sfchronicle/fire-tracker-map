@@ -6,6 +6,20 @@ path {
   fill-opacity: 0.3 !important;
 }
 
+#fullwidth-social{
+  width:100%;
+  text-align:center;
+
+  .social{
+    display:inline-block;
+    padding:0 5px;
+
+    @media @mobile{
+      font-size: 17px;
+    }
+  }
+}
+
 #map-leaflet {
  height: 100%;
  width: 100%;
@@ -14,6 +28,9 @@ path {
  left: 0;
  top: 0;
  z-index: 0;
+ @media @phone-horiz {
+   height: 50%;
+ }
 }
 
 .leaflet-layer {
@@ -24,7 +41,19 @@ path {
   margin-top: 20px;
 }
 
+.instructions {
+  padding-top: 15px;
+  padding-bottom: 5px;
+  font-size: 15px;
+  line-height: 1.2;
+  // text-align: center;
+  .fa {
+    padding-right: 5px;
+  }
+}
+
 .map-overlay {
+  font-family: @med-graphics;
   z-index: 1000;
   background: white;
   border: 1px solid @black;
@@ -34,27 +63,54 @@ path {
   bottom: 20px;
   overflow-y: scroll;
   max-width: 40%;
-  .fire-block {
-    font-size: 16px;
-    line-height: 1.2;
-    padding: 20px;
-    cursor: pointer;
-    border-top: 1px solid lighten(@light-gray,10%);
-    &.active {
-      background: lighten(@light-gray,10%);
-    }
-    .fire-name {
-      font-size: 18px;
-      font-weight: 600;
-    }
-    .fire-desc {
-      padding: 5px 0;
-    }
-    .fire-info-type {
-      padding-right: 5px;
-      font-style: italic;
-    }
+  @media @tablet {
+    max-width: 50%;
   }
+  @media @phone-horiz {
+    top: 50%;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    max-width: 100%;
+  }
+}
+
+.fire-block {
+  &:hover {
+    background: lighten(@light-gray,5%);
+  }
+}
+
+.fire-block, .leaflet-popup-content {
+  font-size: 16px;
+  line-height: 1.2;
+  padding: 20px;
+  cursor: pointer;
+  border-top: 1px solid lighten(@light-gray,10%);
+  &.active {
+    background: lighten(@light-gray,10%);
+  }
+  .fire-name {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .fire-desc {
+    padding: 5px 0;
+  }
+  .fire-info-type {
+    padding-right: 5px;
+    font-family: @block-graphics;
+  }
+}
+
+.leaflet-popup-content {
+  font-size: 14px;
+  .fire-name {
+    font-size: 16px;
+  }
+  font-family: @med-graphics;
+  border-top: 0;
+  padding: 10px;
 }
 
 .dotsSVG {
@@ -135,7 +191,7 @@ path {
 
 .deck {
   font-size: 18px;
-  line-height: 1.4;
+  line-height: 1.2;
   padding: 10px 20px 10px 20px;
 }
 
@@ -264,6 +320,10 @@ path {
   line-height: 1.4;
   font-size: 16px;
   font-family: @med-graphics;
+  @media @mobile {
+    left: 10px;
+    right: 10px;
+  }
   .source {
     padding-bottom: 10px;
   }
@@ -280,5 +340,20 @@ path {
     float: right;
     font-size: 20px;
     padding-bottom: 20px;
+  }
+}
+
+.credit-container {
+  border-top: 1px solid @light-gray;
+  padding: 30px 20px;
+  font-size: 15px;
+  text-align: center;
+  line-height: 1.2;
+  .entry {
+    padding-top: 5px;
+  }
+  .credit-hed {
+    font-family: @block-graphics;
+    padding-bottom: 10px;
   }
 }

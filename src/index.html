@@ -14,11 +14,21 @@
 
   <div class="banner-logo">
     <a href="http://www.sfchronicle.com" target="_blank">
-        <img src="https://projects.sfchronicle.com/shared/logos/sfcg_logo_color.png"></img>
+        <img src="https://projects.sfchronicle.com/shared/logos/sfc_logo_black.png"></img>
     </a>
   </div>
-  <div class="title">Fire Tracker</div>
-  <div class="deck">Check here for up-to-date information about all California fires. Click on the fires below to find them on the map.</div>
+  <div class="title">2018 California Fire Tracker</div>
+  <%= t.include("partials/_fullwidthmap-social.html") %>
+  <!-- <div class="author">Developed by <a href="mailto:eoneill@sfchronicle.com">Emma O'Neill</a> and <a href="mailto: cwirtanen@sfchronicle.com">Clint Wirtanen</a></div> -->
+  <div class="deck">This interactive map developed in The San Francisco Chronicle newsroom provides information on wildfires burning across California.
+  <div class="instructions"><i class="fa fa-hand-o-right"></i>Click on the fire listings below to find them on the map or zoom on the map to see details.</div>
+</div>
+
+  <div class="button-container">
+    <div id="button-collection"></div>
+    <div id="calendar"></div>
+    <div class="popup" id="popup-nasa-explanation"><i class="fa fa-hand-o-right"></i>What are the fire perimeters?</div>
+  </div>
 
   <div class="legend-container">
     <div class="legend-element"><div class="circle-icon"></div> Current hot spot</div>
@@ -32,13 +42,36 @@
   </div>
   <div class="timestamp" id="airDate"></div>
 
-  <div class="button-container">
-    <div id="button-collection"></div>
-    <div class="popup" id="popup-nasa-explanation"><i class="fa fa-hand-o-right"></i>What are the fire perimeters?</div>
+
+  <div id="list-of-fires" class="list-of-fires">
+    <% json.FireData.forEach(function(c,cIDX){ %>
+      <div class="fire-block" id="block<%=cIDX%>">
+        <div class="fire-name"><%=c.FireName%></div>
+        <div class="fire-desc"><%=c.Description%></div>
+        <div class="fire-acreage"><span class="fire-info-type">Acreage:</span><%=c.Acreage%></div>
+        <div class="fire-containment"><span class="fire-info-type">Containment:</span><%=c.Containment %></div>
+        <% if (c.Damage){ %>
+          <div class="fire-damage"><span class="fire-info-type">Damage:</span><%=c.Damage%></div>
+        <% } %>
+        <div class="fire-damage"><span class="fire-info-type">Fire began:</span><%=c.StartDate%></div>
+        <div class="fire-datasource"><span class="fire-info-type">Source:</span><a href="<%=c.Source%>" target="_blank"><%=c.Agency%></a></div>
+      </div>
+    <% }); %>
   </div>
 
+  <div class="credit-container"><div class="credit-hed">Credits:</div>
+    <div class="entry">Interactive Developer:  <br>Emma O'Neill  &bull; <a href="mailto:eoneill@sfchronicle.com">eoneill@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/emmaruthoneill" target="_blank">@emmaruthoneill</a>
+    </div>
+    <div class="entry">Data Developer:  <br>Clint Wirtanen  &bull; <a href="mailto:cwirtanen@sfchronicle.com">cwirtanen@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/ClintWirtanen" target="_blank">@ClintWirtanen</a>
+    </div>
+    <div class="entry">Executive Producer:  <br>Tim O'Rourke  &bull; <a href="mailto:torourke@sfchronicle.com">torourke@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/TimothyORourke" target="_blank">@TimothyORourke</a>
+    </div>
+    <div class="entry">Researcher:  <br>Audrey DeBruine  &bull; <a href="mailto:audrey.debruine@sfchronicle.com@sfchronicle.com">audrey.debruine@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/acdebruine" target="_blank">@acdebruine</a>
+    </div>
+  </div>
 
-  <div id="list-of-fires" class="list-of-fires"></div>
+  </div>
+
 </div>
 
 <div class="air-legend-container" id="airquallegend">
@@ -65,7 +98,9 @@
   </div>
 </div>
 
-<script src="https://extras.sfgate.com/editorial/wildfires/overtime/data.json?3"></script>
+<script>
+  var blockdata = <%= JSON.stringify(json.FireData) %>;
+</script>
 
 <script src="app.js" async></script>
 
