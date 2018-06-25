@@ -8,9 +8,7 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <%= t.include("partials/_meta.html") %>
-    <script src="//projects.sfchronicle.com/shared/js/jquery.min.js"></script>
-    <!-- put in paywall!!!! -->
-
+    <%= t.include("partials/_paywall.html") %>
   </head>
 
   <%= !json.project.embedded ? "<body>" : "<body is='responsive-body'>" %>

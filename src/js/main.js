@@ -10,8 +10,6 @@ var timer30minutes = timer5minutes*6;
 
 var maxWidth = 1000;
 var windowWidth = $(window).width();
-console.log("window width = ");
-console.log(windowWidth);
 
 // format dates
 function formatDate(date,monSTR) {
@@ -38,7 +36,6 @@ if (screen.width <= 480){
   var ca_lat = 39.530580;
   var ca_long = -122.193457;
 }
-console.log(ca_offset);
 
 // var offset_top = 900;
 // var bottomOffset = 200;
@@ -83,10 +80,14 @@ console.log(ca_offset);
       // we need a closure to get event listeners incremented properly
       (function(_currentblock){
         _currentblock.addEventListener("click",function(){
+          map.closePopup();
           $(".fire-block").removeClass("active");
           this.classList.add("active");
           blockIDX = _currentblock.id.split("block")[1];
           map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset], blockdata[blockIDX].Zoom);
+          if (screen.width >= 480){
+            markerArray[blockIDX].openPopup();
+          }
         });
       })(currentblock);
     }
@@ -136,7 +137,6 @@ if (screen.width <= 480){
 }
 
 // add fire icons to label fires ----------------------------------------------------------------
-// sizing evacuation and hospital icons
 var TallMapIcon = L.Icon.extend({
     options: {
         iconSize:     [25,40],
@@ -145,6 +145,7 @@ var TallMapIcon = L.Icon.extend({
 });
 var fireIcon = new TallMapIcon({iconUrl: './assets/graphics/fire_icon2.png?'});
 
+var markerArray = {};
 blockdata.forEach(function(c,cIDX){
   html_str = `
       <div class="fire-name">${c.FireName}</div>
@@ -154,8 +155,8 @@ blockdata.forEach(function(c,cIDX){
       <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
   `;
   var tempmarker = L.marker([c.Lat, c.Lon], {icon: fireIcon}).addTo(map).bindPopup(html_str);
+  markerArray[cIDX] = tempmarker;
 })
-
 
 // load NOAA data -----------------------------------------------------------------------------------------------
 var fireDataURL = "https://extras.sfgate.com/editorial/wildfires/noaa.csv?";
@@ -182,9 +183,6 @@ d3.csv(fireDataURL).then(function(fire_data){
     if (document.getElementById("updateID")) {
       document.getElementById("updateID").innerHTML = e;
     }
-    // if (document.getElementById("updateIDmobile")) {
-    //   document.getElementById("updateIDmobile").innerHTML = e;
-    // }
   });
 
   map_timer = setInterval(function() {
@@ -200,9 +198,6 @@ d3.csv(fireDataURL).then(function(fire_data){
       if (document.getElementById("updateID")) {
         document.getElementById("updateID").innerHTML = e;
       }
-      // if (document.getElementById("updateIDmobile")) {
-      //   document.getElementById("updateIDmobile").innerHTML = e;
-      // }
     });
 
   }, timer5minutes);
@@ -316,7 +311,6 @@ for (var idx=23; idx<(+daynum+1); idx++) {
     (function (dayB) {
       dayB.addEventListener('click', function(){
         var IDX = dayB.id.split("day")[1].split("button")[0] - 23;
-        console.log(IDX);
         var IDXdate = dayB.id.split("day")[1].split("button")[0];
         if (layerstoggle[IDX] == 1) {
           map.removeLayer(layers[IDX]);
@@ -324,14 +318,12 @@ for (var idx=23; idx<(+daynum+1); idx++) {
           dayB.classList.remove("active");
         } else {
           if (IDX == +daynum-23){
-            console.log("nowstyle");
             var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(month,2)+"-"+zeroFill(IDXdate,2)+".sim.json";
             d3.json(nasaDataURL).then(function(nasa){
               layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
             });
             layerstoggle[IDX] = 1;
           } else {
-            console.log("daystyle");
             var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(month,2)+"-"+zeroFill(IDXdate,2)+".sim.json";
             d3.json(nasaDataURL).then(function(nasa){
               layers[IDX] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
