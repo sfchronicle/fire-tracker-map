@@ -19,9 +19,8 @@
   </div>
   <div class="title">2018 California Fire Tracker</div>
   <%= t.include("partials/_fullwidthmap-social.html") %>
-  <!-- <div class="author">Developed by <a href="mailto:eoneill@sfchronicle.com">Emma O'Neill</a> and <a href="mailto: cwirtanen@sfchronicle.com">Clint Wirtanen</a></div> -->
   <div class="deck">This interactive map developed in The San Francisco Chronicle newsroom provides information on wildfires burning across California.
-  <div class="instructions"><i class="fa fa-hand-o-right"></i>Click on the fire listings below to find them on the map or zoom on the map to see details.</div>
+  <div class="instructions"><i class="fa fa-hand-o-right"></i>Click on the fire listings below to find them on the map, and zoom in to see details. Click on the dates to see fire perimeters on that day.</div>
 </div>
 
   <div class="button-container">
@@ -47,6 +46,9 @@
     <% json.FireData.forEach(function(c,cIDX){ %>
       <div class="fire-block" id="block<%=cIDX%>">
         <div class="fire-name"><%=c.FireName%></div>
+        <% if (c.Link){ %>
+          <div class="story-link"><a href="<%=c.Link%>" target="_blank"><i class="fa fa-external-link"></i><%=c.LinkHed%></a></div>
+        <% } %>
         <div class="fire-desc"><%=c.Description%></div>
         <div class="fire-acreage"><span class="fire-info-type">Acreage:</span><%=c.Acreage%></div>
         <div class="fire-containment"><span class="fire-info-type">Containment:</span><%=c.Containment %></div>
