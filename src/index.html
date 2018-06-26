@@ -5,8 +5,8 @@
 <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 
 <!-- Mapbox GL -->
-<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.css" rel='stylesheet' />
-<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
+<!-- <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.css" rel='stylesheet' />
+<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script> -->
 
 <div id="map-leaflet"></div>
 
@@ -40,6 +40,8 @@
     <div class="popup" id="popup-airquality-explanation"><i class="fa fa-hand-o-right"></i>What is air quality data?</div>
   </div>
   <div class="timestamp" id="airDate"></div>
+
+  <div class="external-link"><a href="https://www.sfchronicle.com/california-wildfires-2018/" target="_blank"><i class="fa fa-external-link"></i>Complete coverage of the 2018 California fire season</a></div>
 
 
   <div id="list-of-fires" class="list-of-fires">
@@ -104,7 +106,7 @@
   var blockdata = <%= JSON.stringify(json.FireData) %>;
 </script>
 
-<script src="app.js?3" async></script>
+<script src="app.js?4" async></script>
 
 </body>
 </html>
