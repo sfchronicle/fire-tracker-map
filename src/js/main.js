@@ -22,7 +22,7 @@ function formatDate(date,monSTR) {
   var strTime = hours + ':' + minutes + ' ' + ampm;
   return monSTR + ". " + date.getDate() + ", " + date.getFullYear() + ", at " + strTime;
 }
-var max_zoom_deg = 10;
+var max_zoom_deg = 13;
 var min_zoom_deg = 4;
 
 if (screen.width <= 480){
@@ -101,10 +101,16 @@ if (screen.width <= 480){
 
 // build map ----------------------------------------------------------------------------------------------------
 
+// restrict panning outside of California
+var corner1 = L.latLng(44.006566, -133.289785),
+corner2 = L.latLng(30.711049, -110.635977),
+bounds = L.latLngBounds(corner1, corner2);
+
 // initialize map with center position and zoom levels
 var map = L.map("map-leaflet", {
   minZoom: min_zoom_deg,
   maxZoom: max_zoom_deg,
+  maxBounds: bounds,
   zoomControl: false,
   // scrollWheelZoom: false,
   attributionControl: false
