@@ -20,7 +20,8 @@ function formatDate(date,monSTR) {
   hours = hours ? hours : 12; // the hour '0' should be '12'
   minutes = minutes < 10 ? '0'+minutes : minutes;
   var strTime = hours + ':' + minutes + ' ' + ampm;
-  return monSTR + ". " + date.getDate() + ", " + date.getFullYear() + ", at " + strTime;
+  // return monSTR + ". " + date.getDate() + ", " + date.getFullYear() + ", at " + strTime;
+  return strTime + " "+monSTR + ". " + date.getDate() + ", " + date.getFullYear();
 }
 var max_zoom_deg = 13;
 var min_zoom_deg = 4;
@@ -398,7 +399,6 @@ document.getElementById("airquality").addEventListener("click",function() {
       var airSTR = text.substring(4,6)+"/"+text.substring(6,8)+"/"+text.substring(0,4)+" "+text.substring(8,10)+":00 UTC";
       var date = new Date(airSTR);
       var PDTdate = date.toString();
-      console.log(PDTdate);
       var eAIR = formatDate(date,PDTdate.split(" ")[1]);
 
       // fill in when data was last updated
