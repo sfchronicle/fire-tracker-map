@@ -360,17 +360,37 @@ path {
   }
 }
 
-.credit-container {
+.credit-container, .info-container {
   border-top: 1px solid @light-gray;
   padding: 30px 20px;
   font-size: 15px;
-  text-align: center;
   line-height: 1.2;
   .entry {
-    padding-top: 5px;
+    padding-top: 10px;
   }
   .credit-hed {
     font-family: @block-graphics;
     padding-bottom: 10px;
+  }
+  .credit-title {
+    text-transform: uppercase;
+    font-family: @med-graphics;
+    padding: 5px 0;
+    font-size: 13px;
+  }
+}
+
+.info-container {
+  text-align: left;
+  font-style: italic;
+  .credit-hed {
+    padding-right: 5px;
+  }
+}
+.credit-container {
+  text-align: center;
+  padding-bottom: 50px;
+  .entry {
+    font-family: @block-graphics;
   }
 }

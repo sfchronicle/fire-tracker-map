@@ -63,14 +63,18 @@
     <% }); %>
   </div>
 
-  <div class="credit-container"><div class="credit-hed">Credits:</div>
-    <div class="entry">Interactive Developer:  <br>Emma O'Neill  &bull; <a href="mailto:eoneill@sfchronicle.com">eoneill@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/emmaruthoneill" target="_blank">@emmaruthoneill</a>
+  <div class="info-container">
+    <div class="entry"><span class="credit-hed">Methodology:</span>Fires are labeled when they are larger than 500 acres, cause damage to property, or when people are injured or killed as a result of the fire. Fire labels were last updated on <%=json.FireData[0].Update %></div>
+  </div>
+
+  <div class="credit-container"><div class="credit-hed">Credits</div>
+    <div class="entry"><div class="credit-title">Interactive Developer</div>Emma O'Neill  &bull; <a href="mailto:eoneill@sfchronicle.com">eoneill@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/emmaruthoneill" target="_blank">@emmaruthoneill</a>
     </div>
-    <div class="entry">Data Developer:  <br>Clint Wirtanen  &bull; <a href="mailto:cwirtanen@sfchronicle.com">cwirtanen@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/ClintWirtanen" target="_blank">@ClintWirtanen</a>
+    <div class="entry"><div class="credit-title">Data Developer</div>Clint Wirtanen  &bull; <a href="mailto:cwirtanen@sfchronicle.com">cwirtanen@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/ClintWirtanen" target="_blank">@ClintWirtanen</a>
     </div>
-    <div class="entry">Executive Producer:  <br>Tim O'Rourke  &bull; <a href="mailto:torourke@sfchronicle.com">torourke@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/TimothyORourke" target="_blank">@TimothyORourke</a>
+    <div class="entry"><div class="credit-title">Executive Producer</div>Tim O'Rourke  &bull; <a href="mailto:torourke@sfchronicle.com">torourke@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/TimothyORourke" target="_blank">@TimothyORourke</a>
     </div>
-    <div class="entry">Researcher:  <br>Audrey DeBruine  &bull; <a href="mailto:audrey.debruine@sfchronicle.com@sfchronicle.com">audrey.debruine@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/acdebruine" target="_blank">@acdebruine</a>
+    <div class="entry"><div class="credit-title">Researcher</div>Audrey DeBruine  &bull; <a href="mailto:audrey.debruine@sfchronicle.com@sfchronicle.com">audrey.debruine@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/acdebruine" target="_blank">@acdebruine</a>
     </div>
   </div>
 
@@ -106,7 +110,7 @@
   var blockdata = <%= JSON.stringify(json.FireData) %>;
 </script>
 
-<script src="app.js?4" async></script>
+<script src="app.js?5" async></script>
 
 </body>
 </html>
