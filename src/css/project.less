@@ -394,3 +394,36 @@ path {
     font-family: @block-graphics;
   }
 }
+
+#calendar {
+  overflow-x: scroll;
+}
+
+.daybox {
+  stroke: @day;
+  stroke-width: 3px;
+  fill-opacity: 0.6;
+  box-sizing: border-box;
+  rx: 5;
+  ry: 5;
+  pointer-events: all;
+  &.nodatabox {
+    stroke: @light-gray;
+    fill: @light-gray;
+  }
+  &.nowbox {
+    stroke: @now;
+    fill-opacity: 1;
+    fill: @highlight;
+  }
+}
+
+.textclass{
+  pointer-events: none;
+}
+
+.clickable {
+  &:hover {
+    cursor: pointer;
+  }
+}
