@@ -461,6 +461,7 @@ document.getElementById("close-data-box").addEventListener("click",function() {
 function drawCalendarV2(month,daynum,chartID) {
 
   var no_months = +now.getMonth()+1-5;
+  // no_months = 2;
   console.log("Number of months");
   console.log(no_months);
 
@@ -486,7 +487,7 @@ function drawCalendarV2(month,daynum,chartID) {
 
   var minDate = new Date("2017-06-01");
   // var maxDate = new Date("2017-07-31");
-  var maxDate = new Date(["2017-"+month+"-"+daynum]);
+  // var maxDate = new Date(["2017-"+month+"-"+daynum]);
   console.log("start here");
 
   var svg = d3.select(chartID).selectAll("svg")
