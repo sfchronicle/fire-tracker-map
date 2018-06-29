@@ -20,12 +20,17 @@
   <div class="title">2018 California Fire Tracker</div>
   <%= t.include("partials/_fullwidthmap-social.html") %>
   <div class="deck">This interactive map developed in The San Francisco Chronicle newsroom provides information on wildfires burning across California.
-  <div class="instructions"><i class="fa fa-hand-o-right"></i>Click on the fire listings below to find them on the map, and zoom in to see details. Click on the dates to see fire perimeters on that day.</div>
+  <div class="instructions"><i class="fa fa-hand-o-right"></i>Click on the fire listings below to find them on the map, and zoom in to see details.</div>
 </div>
 
   <div class="button-container">
     <!-- <div id="button-collection"></div> -->
-    <div id="calendar"></div>
+    <div id="calendar-toggle"><i class="fa fa-calendar"></i> Click to view fire perimeters for different dates.</div>
+    <div id="calendar" style="display:none;"></div>
+    <div class="legend-container">
+      <div class="legend-element" ><div class="day-icon now-icon"></div> Current fire perimeter</div>
+      <div class="legend-element" ><div class="day-icon "></div> Previous fire perimeters</div>
+    </div>
     <div class="popup" id="popup-nasa-explanation"><i class="fa fa-hand-o-right"></i>What are the fire perimeters?</div>
   </div>
 

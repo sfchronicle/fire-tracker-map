@@ -573,3 +573,8 @@ function drawCalendarV2(month,daynum,chartID) {
         .attr("class", "month-title")
         .attr("d", monthTitle);
 }
+
+// toggle calendar
+$("#calendar-toggle").click(function() {
+  $("#calendar").toggle();
+})

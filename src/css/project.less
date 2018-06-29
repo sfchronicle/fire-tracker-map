@@ -223,7 +223,7 @@ path {
     cursor: pointer;
     margin-bottom: 5px;
   }
-  .area-icon, .circle-icon {
+  .area-icon, .circle-icon, .day-icon {
     display: inline-block;
     margin-bottom: -5px;
   }
@@ -248,6 +248,19 @@ path {
       background: lighten(@day,5%);
       color: white;
     }
+  }
+  .day-icon {
+    border: 2px solid @day;
+    height: 15px;
+    width: 15px;
+    margin-bottom: -2px;
+    background-color: rgba(242, 165, 0, 0.3);
+    border-radius: 20px;
+  }
+
+  .now-icon {
+    border: 2px solid @highlight;
+    background-color: rgba(236, 28, 36, 0.3);
   }
   .now {
     border: 2px solid @now;
@@ -438,4 +451,16 @@ path {
   &:hover {
     cursor: pointer;
   }
+}
+
+#calendar-toggle {
+  padding-bottom: 10px;
+  font-family: @block-graphics;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.calendar-hidden {
+  display:none;
 }
