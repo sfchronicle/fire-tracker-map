@@ -299,12 +299,15 @@ function zeroFill( number, width ){
 var nasa_timer;
 var layers = [];
 var layerstoggle = [];
+var urlsList = [];
 var daystyle = {"color": "#F2A500","fill-opacity": 0.4,"weight": 3};
 var nowstyle = {"color": "#D94100","fill-opacity": 0.8,"weight": 3};
+var calendarCount = 0;
 // fill in June data starting on the 23th (first day we began fire tracker)
 if (+month >= 6){
   for (var idx=23; idx<(+daynum+1); idx++) {
     var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-06-"+zeroFill(idx,2)+".sim.json";
+    urlsList.push(nasaDataURL);
     addMapLayer(nasaDataURL,idx,6,+daynum,+month);
   }
 }
@@ -313,6 +316,7 @@ if (+month > 6){
   for (var monthIDX=7; monthIDX<(+month); monthIDX++){
     for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
       var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json";
+      urlsList.push(nasaDataURL);
       addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month);
     }
   }
@@ -323,119 +327,45 @@ function addMapLayer(nasaDataURL,day,month,currentday,currentmonth){
     d3.json(nasaDataURL).then(function(nasa){
       layers.push(L.geoJSON(nasa,{style: nowstyle}).addTo(map));
       layerstoggle.push(1);
-      document.getElementById("date"+month+day).addEventListener("click",function(){
-        console.log("CLICK");
-        console.log(this);
-        if (layerstoggle[IDX] == 1) {
-          map.removeLayer(layers[IDX]);
-          layerstoggle[IDX] = 0;
-          this.classList.remove("active");
-        } else {
-          layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
-          layerstoggle[IDX] = 1;
-          this.classList.add("active");
-        }
-      })
     });
   } else {
     d3.json(nasaDataURL).then(function(nasa){
       layers.push(L.geoJSON(nasa,{style: daystyle}).addTo(map));
       layerstoggle.push(1);
-      document.getElementById("date"+month+day).addEventListener("click",function(){
-        console.log("CLICK");
-        console.log(this);
-        if (layerstoggle[IDX] == 1) {
-          map.removeLayer(layers[IDX]);
-          layerstoggle[IDX] = 0;
-          this.classList.remove("active");
-        } else {
-          layers[IDX] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
-          layerstoggle[IDX] = 1;
-          this.classList.add("active");
-        }
-      })
     });
   }
+  calendarCount++;
 }
 
-  // (function (dayB) {
-  //   dayB.addEventListener('click', function(){
-  //     var IDX = dayB.id.split("day")[1].split("button")[0] - 23;
-  //     var IDXdate = dayB.id.split("day")[1].split("button")[0];
-  //     if (layerstoggle[IDX] == 1) {
-  //       map.removeLayer(layers[IDX]);
-  //       layerstoggle[IDX] = 0;
-  //       dayB.classList.remove("active");
-  //     } else {
-  //       if (IDX == +daynum-23){
-  //         var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(month,2)+"-"+zeroFill(IDXdate,2)+".sim.json";
-  //         d3.json(nasaDataURL).then(function(nasa){
-  //           layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
-  //         });
-  //         layerstoggle[IDX] = 1;
-  //       } else {
-  //         var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(month,2)+"-"+zeroFill(IDXdate,2)+".sim.json";
-  //         d3.json(nasaDataURL).then(function(nasa){
-  //           layers[IDX] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
-  //         });
-  //         layerstoggle[IDX] = 1;
-  //       }
-  //       layerstoggle[IDX] = 1;
-  //       dayB.classList.add("active");
-  //     }
-  //   });
-  // })(dayB);
+// turning these calendar buttons into actual buttons
+var dayB;
+for (var t = 0; t <calendarCount; t++){
+  dayB = document.getElementById("date"+t);
+  (function (dayB) {
+    dayB.addEventListener('click', function(){
+      var IDX = +dayB.id.split("date")[1];
+      if (layerstoggle[IDX] == 1) {
+        map.removeLayer(layers[IDX]);
+        layerstoggle[IDX] = 0;
+        dayB.classList.remove("active");
+      } else {
+        if (IDX === (+calendarCount-1)){
+          d3.json(urlsList[IDX]).then(function(nasa){
+            layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
+          });
+          layerstoggle[IDX] = 1;
+        } else {
+          d3.json(urlsList[IDX]).then(function(nasa){
+            layers[IDX] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
+          });
+          layerstoggle[IDX] = 1;
+        }
+        dayB.classList.add("active");
+      }
+    });
+  })(dayB);
+}
 
-console.log(layers);
-console.log(layerstoggle);
-
-  // OLD CODE--------------------------------------------------------------------
-  // var buttonSTR = "<span class='monthname'>"+monthName+"</span>";
-  // for (var i=23; i<(+daynum+1); i++){
-  //   if (i == +daynum) {
-  //     // when we have a variable number of days, use this ---->
-  //     buttonSTR += "<div class='now day"+i+" button clickbutton nowbutton active' id='day"+i+"button'>Today</div>";
-  //   } else {
-  //     buttonSTR += "<div class='day day"+i+" button clickbutton calendarbutton active' id='day"+i+"button'>"+i+"</div>";
-  //   }
-  // }
-  // document.getElementById("button-collection").innerHTML = buttonSTR;
-  // OLD CODE--------------------------------------------------------------------
-
-  // // turning these calendar buttons into actual buttons
-  // var dayB;
-  // for (var t = 23; t < (+daynum+1); t++){
-  //   dayB = document.getElementById("date6"+t);
-  //   (function (dayB) {
-  //     dayB.addEventListener('click', function(){
-  //       var IDX = dayB.id.split("day")[1].split("button")[0] - 23;
-  //       var IDXdate = dayB.id.split("day")[1].split("button")[0];
-  //       if (layerstoggle[IDX] == 1) {
-  //         map.removeLayer(layers[IDX]);
-  //         layerstoggle[IDX] = 0;
-  //         dayB.classList.remove("active");
-  //       } else {
-  //         if (IDX == +daynum-23){
-  //           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(month,2)+"-"+zeroFill(IDXdate,2)+".sim.json";
-  //           d3.json(nasaDataURL).then(function(nasa){
-  //             layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
-  //           });
-  //           layerstoggle[IDX] = 1;
-  //         } else {
-  //           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(month,2)+"-"+zeroFill(IDXdate,2)+".sim.json";
-  //           d3.json(nasaDataURL).then(function(nasa){
-  //             layers[IDX] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
-  //           });
-  //           layerstoggle[IDX] = 1;
-  //         }
-  //         layerstoggle[IDX] = 1;
-  //         dayB.classList.add("active");
-  //       }
-  //     });
-  //   })(dayB);
-  // }
-
-// }
 
 // air quality layer ----------------------------------------------------------------------
 var pollution_toggle = 0;
@@ -576,16 +506,17 @@ function drawCalendarV2(month,daynum,chartID) {
 
   rect.append("rect")
       .attr("class", function(d){
-        if (d.getMonth() === 5 && d.getDate() < 24){
-          return "daybox nodatabox";
+        if (d.getMonth() === 5 && d.getDate() < 23){
+          return "daybox nodatabox active";
         } else if (d.getMonth() === now.getMonth() && d.getDate() === now.getDate()){
-          return "daybox nowbox clickable";
+          return "daybox nowbox clickable active";
         } else {
-          return "daybox clickable";
+          return "daybox clickable active";
         }
       })
-      .attr("id",function(d){
-        return "date"+(+d.getMonth()+1)+d.getDate();
+      .attr("id",function(d,dIDX){
+        return "date"+(dIDX-22);
+        // return "date"+(+d.getMonth()+1)+d.getDate();
       })
       .attr("width", cellSize)
       .attr("height", cellSize)
@@ -603,7 +534,7 @@ function drawCalendarV2(month,daynum,chartID) {
 
   rect.append("text")
       .attr("class", function(d){
-        if (d.getMonth() === 5 && d.getDate() < 24){
+        if (d.getMonth() === 5 && d.getDate() < 23){
           return "textclass";
         } else if (d.getMonth() === now.getMonth() && d.getDate() === now.getDate()){
           return "textclass clickable";
@@ -614,7 +545,6 @@ function drawCalendarV2(month,daynum,chartID) {
       .text(function(d) {
         return d.getDate();
       })
-      .attr("fill","white")
       .attr("x", function(d) {
         var month_padding = 1.2 * cellSize*7 * (mon(d)-6)+2;
         return day(d) * cellSize + month_padding+12;
