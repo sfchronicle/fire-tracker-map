@@ -416,23 +416,35 @@ path {
   stroke: @day;
   stroke-width: 3px;
   fill-opacity: 0.6;
+  fill: white;
   box-sizing: border-box;
   rx: 5;
   ry: 5;
   pointer-events: all;
+  &.active {
+    fill: @day;
+  }
   &.nodatabox {
     stroke: @light-gray;
     fill: @light-gray;
   }
   &.nowbox {
     stroke: @now;
-    fill-opacity: 1;
-    fill: @highlight;
+    fill-opacity: 0.6;
+    fill: white;
+    &.active {
+      fill-opacity: 1;
+      fill: @highlight;
+    }
   }
 }
 
 .textclass{
   pointer-events: none;
+  fill: white;
+  &.clickable {
+    fill: #333;
+  }
 }
 
 .clickable {
