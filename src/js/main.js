@@ -117,8 +117,10 @@ var map = L.map("map-leaflet", {
   attributionControl: false
 });
 
-// map.setView([blockdata[0].Lat,blockdata[0].Lon], blockdata[0].Zoom);
-map.setView([ca_lat,(ca_long-ca_offset)],zoom_deg);
+setTimeout(function(){
+  map.setView([blockdata[0].Lat,blockdata[0].Lon-ca_offset], blockdata[0].Zoom);
+},10);
+// map.setView([ca_lat,(ca_long-ca_offset)],zoom_deg);
 
 // initializing the svg layer
 L.svg().addTo(map);
@@ -470,7 +472,7 @@ function drawCalendarV2(month,daynum,chartID) {
         cellSize = 25; // cell size
 
   var no_months_in_a_row = no_months;//Math.floor(width / (cellSize * 7 + 50));
-  var shift_up = cellSize * 2.2;
+  var shift_up = cellSize * 2.5;
 
   var day = d3.timeFormat("%w"), // day of the week
       day_of_month = d3.timeFormat("%e") // day of the month
@@ -487,7 +489,7 @@ function drawCalendarV2(month,daynum,chartID) {
 
   var minDate = new Date("2017-06-01");
   // var maxDate = new Date("2017-07-31");
-  // var maxDate = new Date(["2017-"+month+"-"+daynum]);
+  var maxDate = new Date(["2017-"+month+"-"+daynum]);
   console.log("start here");
 
   var svg = d3.select(chartID).selectAll("svg")
@@ -570,7 +572,7 @@ function drawCalendarV2(month,daynum,chartID) {
           var month_padding = 1.2 * cellSize*7* (mon(d)-6);
           return month_padding;
         })
-        .attr("y", 20)
+        .attr("y", 10)
         .attr("class", "month-title")
         .attr("d", monthTitle);
 }

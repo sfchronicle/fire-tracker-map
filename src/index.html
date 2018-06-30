@@ -24,7 +24,6 @@
 </div>
 
   <div class="button-container">
-    <!-- <div id="button-collection"></div> -->
     <div id="calendar-toggle"><i class="fa fa-calendar"></i> Click to view fire perimeters for different dates.</div>
     <div id="calendar" style="display:none;"></div>
     <div class="legend-container">
@@ -50,7 +49,11 @@
 
   <div id="list-of-fires" class="list-of-fires">
     <% json.FireData.forEach(function(c,cIDX){ %>
-      <div class="fire-block" id="block<%=cIDX%>">
+      <% if (cIDX === 0){ %>
+        <div class="fire-block active" id="block<%=cIDX%>">
+      <% } else { %>
+        <div class="fire-block" id="block<%=cIDX%>">
+      <% } %>
         <div class="fire-name"><%=c.FireName%></div>
         <% if (c.Link){ %>
           <div class="story-link"><a href="<%=c.Link%>" target="_blank"><i class="fa fa-external-link"></i><%=c.LinkHed%></a></div>
@@ -58,6 +61,9 @@
         <div class="fire-desc"><%=c.Description%></div>
         <div class="fire-acreage"><span class="fire-info-type">Acreage:</span><%=c.Acreage%></div>
         <div class="fire-containment"><span class="fire-info-type">Containment:</span><%=c.Containment %></div>
+        <% if (c.Injuries){ %>
+          <div class="fire-damage"><span class="fire-info-type">Injuries:</span><%=c.Injuries%></div>
+        <% } %>
         <% if (c.Damage){ %>
           <div class="fire-damage"><span class="fire-info-type">Damage:</span><%=c.Damage%></div>
         <% } %>
@@ -114,7 +120,7 @@
   var blockdata = <%= JSON.stringify(json.FireData) %>;
 </script>
 
-<script src="app.js?6" async></script>
+<script src="app.js?7" async></script>
 
 </body>
 </html>
