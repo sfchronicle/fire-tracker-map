@@ -570,6 +570,8 @@ var drawCalendarV2 = function(month,daynum,chartID) {
           var row_level = 1;//Math.ceil((mon(d)-5) / (no_months_in_a_row));
           return (week_diff*cellSize) + row_level*cellSize*8 - cellSize/2 - shift_up;
         })
+        .attr("rx","5")
+        .attr("ry","5")
         .attr("fill","#F2A500")
         .datum(format);
 
