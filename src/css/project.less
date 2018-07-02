@@ -198,12 +198,13 @@ path {
   @media @map-width {
     position: absolute;
     z-index: 3000;
-    bottom: 20px;
-    right: 45px;
+    top: 20px;
+    bottom: auto;
+    right: 60px;
   }
-  @media @mobile {
-    right: 25px;
-  }
+  // @media @mobile {
+  //   right: 25px;
+  // }
 }
 
 .deck {
@@ -417,7 +418,6 @@ path {
   stroke-width: 3px;
   fill-opacity: 0.6;
   fill: white;
-  box-sizing: border-box;
   rx: 5;
   ry: 5;
   pointer-events: all;
