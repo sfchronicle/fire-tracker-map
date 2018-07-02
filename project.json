@@ -17,5 +17,7 @@
   "production": false,
   "embedded": false,
   "paywall":"meter",
-  "paywall_meta": 1
+  "paywall_meta": 1,
+  "dateUpdated": "2018-07-02",
+  "timeUpdated": "06:00:00 GMT-0700"
 }
