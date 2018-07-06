@@ -6,6 +6,30 @@ path {
   fill-opacity: 0.3 !important;
 }
 
+#map-expand {
+  position: fixed;
+  bottom: 50%;
+  right: 0;
+  background: rgba(255,255,255,0.7);
+  padding: 0 10px;
+  font-size: 25px;
+  margin-bottom: 32px;
+  border: 1px solid @black;
+  display: none;
+  pointer: cursor;
+  -webkit-transition: all 500ms linear;
+  -ms-transition: all 500ms linear;
+  transition: all 500ms linear;
+  @media @phone-horiz {
+    display: block;
+  }
+  &.big-leaflet-map{
+    @media @phone-horiz {
+      bottom: 0;
+    }
+  }
+}
+
 #fullwidth-social{
   width:100%;
   text-align:center;
@@ -30,6 +54,11 @@ path {
  z-index: 0;
  @media @phone-horiz {
    height: 50%;
+ }
+ &.big-leaflet-map {
+   @media @phone-horiz{
+     height: 100%;
+   }
  }
 }
 
@@ -63,6 +92,9 @@ path {
   bottom: 20px;
   overflow-y: scroll;
   max-width: 40%;
+  -webkit-transition: all 500ms linear;
+  -ms-transition: all 500ms linear;
+  transition: all 500ms linear;
   @media @tablet {
     max-width: 50%;
   }
@@ -72,6 +104,11 @@ path {
     left: 0px;
     right: 0px;
     max-width: 100%;
+  }
+  &.big-leaflet-map {
+    @media @phone-horiz{
+      top: 100%;
+    }
   }
 }
 

@@ -629,3 +629,21 @@ drawCalendarV2(month,daynumplus1,"#calendar").then(()=>calendarButtons());
 $("#calendar-toggle").click(function() {
   $("#calendar").toggle();
 })
+
+// expand map on mobile
+var expand_toggle = 0;
+document.getElementById("map-expand").addEventListener("click",function(e){
+  if (expand_toggle == 1){
+    document.getElementById("map-leaflet").classList.remove("big-leaflet-map");
+    document.getElementById("map-overlay").classList.remove("big-leaflet-map");
+    this.classList.remove("big-leaflet-map");
+    expand_toggle = 0;
+  } else {
+    document.getElementById("map-leaflet").classList.add("big-leaflet-map");
+    document.getElementById("map-overlay").classList.add("big-leaflet-map");
+    this.classList.add("big-leaflet-map");
+    expand_toggle = 1;
+  }
+  $('.fa').toggleClass('fa-expand fa-compress');
+  setTimeout(function(){ map.invalidateSize()}, 500);
+})
