@@ -24,6 +24,11 @@
   <div class="instructions"><i class="fa fa-hand-o-right"></i>Click on the fire listings below to find them on the map, and zoom in to see details.</div>
 </div>
 
+  <div class="legend-container">
+    <div class="legend-element inline-legend"><img class="legend-img" src="./assets/graphics/fireicon_burning_GR.png"></img><div class="legend-text">Ongoing fire</div></div>
+    <div class="legend-element inline-legend"><img class="legend-img" src="./assets/graphics/fireicon_contained_GR.png"></img><div class="legend-text">Contained fire</div></div>
+  </div>
+
   <div class="button-container">
     <div id="calendar-toggle"><i class="fa fa-calendar"></i> Click to view fire perimeters for different dates.</div>
     <div id="calendar" style="display:none;"></div>
@@ -48,31 +53,7 @@
 
   <div class="external-link"><a href="https://www.sfchronicle.com/california-wildfires-2018/" target="_blank"><i class="fa fa-external-link"></i>Complete coverage of the 2018 California fire season</a></div>
 
-  <div id="list-of-fires" class="list-of-fires">
-    <% json.FireData.forEach(function(c,cIDX){ %>
-      <% if (cIDX === 0){ %>
-        <div class="fire-block active" id="block<%=cIDX%>">
-      <% } else { %>
-        <div class="fire-block" id="block<%=cIDX%>">
-      <% } %>
-        <div class="fire-name"><%=c.FireName%></div>
-        <% if (c.Link){ %>
-          <div class="story-link"><a href="<%=c.Link%>" target="_blank"><i class="fa fa-external-link"></i><%=c.LinkHed%></a></div>
-        <% } %>
-        <div class="fire-desc"><%=c.Description%></div>
-        <div class="fire-acreage"><span class="fire-info-type">Acreage:</span><%=c.Acreage%></div>
-        <div class="fire-containment"><span class="fire-info-type">Containment:</span><%=c.Containment %></div>
-        <% if (c.Injuries){ %>
-          <div class="fire-damage"><span class="fire-info-type">Injuries:</span><%=c.Injuries%></div>
-        <% } %>
-        <% if (c.Damage){ %>
-          <div class="fire-damage"><span class="fire-info-type">Damage:</span><%=c.Damage%></div>
-        <% } %>
-        <div class="fire-damage"><span class="fire-info-type">Fire began:</span><%=c.StartDate%></div>
-        <div class="fire-datasource"><span class="fire-info-type">Source:</span><a href="<%=c.Source%>" target="_blank"><%=c.Agency%></a></div>
-      </div>
-    <% }); %>
-  </div>
+  <div id="list-of-fires" class="list-of-fires"></div>
 
   <div class="info-container">
     <div class="entry"><span class="credit-hed">Methodology:</span>Fires are labeled when they are larger than 500 acres, cause damage to property, or when people are injured or killed as a result of the fire. Fire labels were last updated at <%=json.FireData[0].Update %>.</div>
@@ -83,9 +64,10 @@
     </div>
     <div class="entry"><div class="credit-title">Data Developer</div>Clint Wirtanen  &bull; <a href="mailto:cwirtanen@sfchronicle.com">cwirtanen@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/ClintWirtanen" target="_blank">@ClintWirtanen</a>
     </div>
-    <div class="entry"><div class="credit-title">Executive Producer</div>Tim O'Rourke  &bull; <a href="mailto:torourke@sfchronicle.com">torourke@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/TimothyORourke" target="_blank">@TimothyORourke</a>
-    </div>
     <div class="entry"><div class="credit-title">Researcher</div>Audrey DeBruine  &bull; <a href="mailto:audrey.debruine@sfchronicle.com@sfchronicle.com">audrey.debruine@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/acdebruine" target="_blank">@acdebruine</a>
+    </div>
+    <div class="entry"><div class="credit-title">Executive Producer</div>Tim O'Rourke  &bull; <a href="mailto:torourke@sfchronicle.com">torourke@sfchronicle.com</a>   &bull; <a href = "https://twitter.com/TimothyORourke" target="_blank">@TimothyORourke</a>
+    <div class="entry"><div class="credit-title">Graphic Illustrator</div>John Blanchard  &bull; <a href="mailto:jblanchard@sfchronicle.com">jblanchard@sfchronicle.com</a>
     </div>
   </div>
 

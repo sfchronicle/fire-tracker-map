@@ -47,38 +47,60 @@ if (screen.width <= 480){
 // var bottomOffset = 200;
 
 // load fire scrollbar------------------------------------------------------------------------------------------
-// var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json";
-// var overlayString=``;
-// var overlayTimer;
-// var blockdata;
-//
-// function loadSidebar(){
-//   console.log("are we getting here");
-//   d3.json(calfireDataURL).then(function(caldata){
-//     blockdata = caldata;
-//     caldata.forEach(function(c,cIDX){
-//       // center map on top fire
-//       if (cIDX == 0){
-//         map.setView([c.Lat,c.Lon], c.Zoom);
-//       }
-//       overlayString += `
-//         ${(cIDX == 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
-//           <div class="fire-name">${c.FireName}</div>
-//           <div class="fire-desc">${c.Description}</div>
-//           <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
-//           <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
-//           ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
-//           <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
-//         </div>
-//       `;
-//     })
-//     document.getElementById("list-of-fires").innerHTML = overlayString;
-//   });
+var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json";
+var overlayString=``;
+var overlayTimer;
+var blockdata;
+
+function loadSidebar(){
+  console.log("are we getting here");
+  d3.json(calfireDataURL).then(function(caldata){
+    blockdata = caldata;
+    caldata.forEach(function(c,cIDX){
+      // center map on top fire
+      if (cIDX == 0){
+        map.setView([c.Lat,c.Lon], c.Zoom);
+      }
+      overlayString += `
+        ${(cIDX == 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
+          ${(c.Containment == "100%") ? `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_contained_GR.png"></img>${c.FireName}</div>` : `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_burning_GR.png"></img>${c.FireName}</div>`}
+          <div class="fire-desc">${c.Description}</div>
+          <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
+          <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
+          ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
+          ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
+          ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
+          <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+        </div>
+      `;
+    })
+    document.getElementById("list-of-fires").innerHTML = overlayString;
+
+    var markerArray = {};
+    caldata.forEach(function(c,cIDX){
+      html_str = `
+          <div class="fire-name">${c.FireName}</div>
+          <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
+          <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
+          ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
+          ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
+          ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
+          <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+      `;
+      if (c.Containment == "100%"){
+        var tempmarker = L.marker([c.Lat, c.Lon], {icon: containedIcon}).addTo(map).bindPopup(html_str);
+      } else {
+        var tempmarker = L.marker([c.Lat, c.Lon], {icon: activeIcon}).addTo(map).bindPopup(html_str);
+      }
+      markerArray[cIDX] = tempmarker;
+    })
+
+  });
 
   // event listeners to center on any fire ------------------------------------------------------------------------
 
   // I am doing a hack here to make sure that the sidebar exists before I set event listeners on it
-  // setTimeout(function(){
+  setTimeout(function(){
     var fireboxes = document.getElementsByClassName("fire-block");
     var currentblock,blockIDX;
     for (var fidx=0; fidx<fireboxes.length; fidx++){
@@ -97,13 +119,14 @@ if (screen.width <= 480){
         });
       })(currentblock);
     }
-  // },0);
-// }
+  },0);
+}
 
-// loadSidebar();
-// overlayTimer = setInterval(function() {
-//   loadSidebar();
-// }, timer30minutes);
+loadSidebar();
+overlayTimer = setInterval(function() {
+  console.log("reloading the sidebar");
+  loadSidebar();
+}, timer30minutes);
 
 // build map ----------------------------------------------------------------------------------------------------
 
@@ -171,20 +194,15 @@ var TallMapIcon = L.Icon.extend({
         iconAnchor:   [10,10],
     }
 });
-var fireIcon = new TallMapIcon({iconUrl: './assets/graphics/fire_icon2.png?'});
+var MapIcon = L.Icon.extend({
+    options: {
+        iconSize:     [25,25],
+        iconAnchor:   [10,10],
+    }
+});
+var activeIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_burning_GR.png?'});
+var containedIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_contained_GR.png?'});
 
-var markerArray = {};
-blockdata.forEach(function(c,cIDX){
-  html_str = `
-      <div class="fire-name">${c.FireName}</div>
-      <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
-      <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
-      ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
-      <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
-  `;
-  var tempmarker = L.marker([c.Lat, c.Lon], {icon: fireIcon}).addTo(map).bindPopup(html_str);
-  markerArray[cIDX] = tempmarker;
-})
 
 // load NOAA data -----------------------------------------------------------------------------------------------
 var fireDataURL = "https://extras.sfgate.com/editorial/wildfires/noaa.csv?";
