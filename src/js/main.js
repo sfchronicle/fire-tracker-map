@@ -77,7 +77,7 @@ function loadSidebar(){
     document.getElementById("list-of-fires").innerHTML = overlayString;
 
     setTimeout(function(){
-      map.setView([blockdata[0].Lat,blockdata[0].Lon-ca_offset], blockdata[0].Zoom);
+      map.setView([caldata[0].Lat,caldata[0].Lon-ca_offset], caldata[0].Zoom);
     },10);
 
     var markerArray = {};
