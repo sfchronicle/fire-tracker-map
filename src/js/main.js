@@ -76,6 +76,10 @@ function loadSidebar(){
     })
     document.getElementById("list-of-fires").innerHTML = overlayString;
 
+    setTimeout(function(){
+      map.setView([blockdata[0].Lat,blockdata[0].Lon-ca_offset], blockdata[0].Zoom);
+    },10);
+
     var markerArray = {};
     caldata.forEach(function(c,cIDX){
       html_str = `
@@ -145,9 +149,6 @@ var map = L.map("map-leaflet", {
   attributionControl: false
 });
 
-setTimeout(function(){
-  map.setView([blockdata[0].Lat,blockdata[0].Lon-ca_offset], blockdata[0].Zoom);
-},10);
 // map.setView([ca_lat,(ca_long-ca_offset)],zoom_deg);
 
 // initializing the svg layer
