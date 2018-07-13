@@ -50,83 +50,91 @@ var overlayString=``;
 var overlayTimer;
 var markerArray = {};
 
-function loadSidebar(){
+var loadSidebar = function(){
   console.log("loading sidebar");
-  d3.json(calfireDataURL).then(function(caldata){
-    blockdata = caldata;
-    caldata.forEach(function(c,cIDX){
-      // center map on top fire
-      if (cIDX == 0){
-        map.setView([c.Lat,c.Lon-ca_offset], c.Zoom);
-      }
-      overlayString += `
-        ${(cIDX == 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
-          ${(c.Containment == "100%") ? `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_contained_GR.png"></img>${c.FireName}</div>` : `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_burning_GR.png"></img>${c.FireName}</div>`}
-          <div class="fire-desc">${c.Description}</div>
-          <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
-          <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
-          ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
-          ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
-          ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
-          <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
-        </div>
-      `;
-    })
-    document.getElementById("list-of-fires").innerHTML = overlayString;
+  document.getElementById("list-of-fires").innerHTML = "";
+  return new Promise(function(ok,fail){
 
-    caldata.forEach(function(c,cIDX){
-      html_str = `
-          <div class="fire-name">${c.FireName}</div>
-          <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
-          <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
-          ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
-          ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
-          ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
-          <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
-      `;
-      if (c.Containment == "100%"){
-        var tempmarker = L.marker([c.Lat, c.Lon], {icon: containedIcon}).addTo(map).bindPopup(html_str);
-      } else {
-        var tempmarker = L.marker([c.Lat, c.Lon], {icon: activeIcon}).addTo(map).bindPopup(html_str);
-      }
-      markerArray[cIDX] = tempmarker;
-    })
+    d3.json(calfireDataURL).then(function(caldata){
 
+      blockdata = caldata;
+      overlayString = ``;
+      caldata.forEach(function(c,cIDX){
+        // center map on top fire
+        if (cIDX == 0){
+          map.setView([c.Lat,c.Lon-ca_offset], c.Zoom);
+        }
+        overlayString += `
+          ${(cIDX == 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
+            ${(c.Containment == "100%") ? `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_contained_GR.png"></img>${c.FireName}</div>` : `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_burning_GR.png"></img>${c.FireName}</div>`}
+            <div class="fire-desc">${c.Description}</div>
+            <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
+            <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
+            ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
+            ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
+            ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
+            <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+          </div>
+        `;
+      })
+      document.getElementById("list-of-fires").innerHTML = overlayString;
+      ok();
+
+      caldata.forEach(function(c,cIDX){
+        html_str = `
+            <div class="fire-name">${c.FireName}</div>
+            <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
+            <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
+            ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
+            ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
+            ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
+            <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+        `;
+        if (c.Containment == "100%"){
+          var tempmarker = L.marker([c.Lat, c.Lon], {icon: containedIcon}).addTo(map).bindPopup(html_str);
+        } else {
+          var tempmarker = L.marker([c.Lat, c.Lon], {icon: activeIcon}).addTo(map).bindPopup(html_str);
+        }
+        markerArray[cIDX] = tempmarker;
+      })
+
+    });
   });
 
-  // event listeners to center on any fire ------------------------------------------------------------------------
-
-  // I am doing a hack here to make sure that the sidebar exists before I set event listeners on it
-  setTimeout(function(){
-    var fireboxes = document.getElementsByClassName("fire-block");
-    var currentblock,blockIDX;
-    for (var fidx=0; fidx<fireboxes.length; fidx++){
-      currentblock = fireboxes[fidx];
-      // we need a closure to get event listeners incremented properly
-      (function(_currentblock){
-        _currentblock.addEventListener("click",function(){
-          map.closePopup();
-          $(".fire-block").removeClass("active");
-          this.classList.add("active");
-          blockIDX = _currentblock.id.split("block")[1];
-          if (blockdata[blockIDX].Zoom){
-            map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset], blockdata[blockIDX].Zoom);
-          } else {
-            map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset],9);
-          }
-          if (screen.width >= 480){
-            markerArray[blockIDX].openPopup();
-          }
-        });
-      })(currentblock);
-    }
-  },0);
 }
 
-loadSidebar();
+// event listeners to center on any fire ------------------------------------------------------------------------
+
+var LoadSidebarEvents = function(){
+  var fireboxes = document.getElementsByClassName("fire-block");
+  var currentblock,blockIDX;
+  for (var fidx=0; fidx<fireboxes.length; fidx++){
+    currentblock = fireboxes[fidx];
+    // we need a closure to get event listeners incremented properly
+    (function(_currentblock){
+      _currentblock.addEventListener("click",function(){
+        map.closePopup();
+        $(".fire-block").removeClass("active");
+        this.classList.add("active");
+        blockIDX = _currentblock.id.split("block")[1];
+        if (blockdata[blockIDX].Zoom){
+          map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset], blockdata[blockIDX].Zoom);
+        } else {
+          map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset],9);
+        }
+        if (screen.width >= 480){
+          markerArray[blockIDX].openPopup();
+        }
+      });
+    })(currentblock);
+  }
+};
+
+// make sure that sidebar elements exist before putting event listeners on them
+loadSidebar().then(()=>LoadSidebarEvents());
 overlayTimer = setInterval(function() {
   console.log("reloading the sidebar");
-  loadSidebar();
+  loadSidebar().then(()=>LoadSidebarEvents());
 }, timer5minutes);
 
 // build map ----------------------------------------------------------------------------------------------------
