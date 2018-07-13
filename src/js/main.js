@@ -50,7 +50,7 @@ if (screen.width <= 480){
 var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json";
 var overlayString=``;
 var overlayTimer;
-var blockdata;
+var markerArray = {};
 
 function loadSidebar(){
   console.log("are we getting here");
@@ -80,7 +80,6 @@ function loadSidebar(){
       map.setView([caldata[0].Lat,caldata[0].Lon-ca_offset], caldata[0].Zoom);
     },10);
 
-    var markerArray = {};
     caldata.forEach(function(c,cIDX){
       html_str = `
           <div class="fire-name">${c.FireName}</div>
@@ -130,7 +129,7 @@ loadSidebar();
 overlayTimer = setInterval(function() {
   console.log("reloading the sidebar");
   loadSidebar();
-}, timer30minutes);
+}, timer5minutes);
 
 // build map ----------------------------------------------------------------------------------------------------
 
