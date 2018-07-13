@@ -5,6 +5,7 @@ require("./lib/leaflet-mapbox-gl");
 // format numbers
 var formatthousands = d3.format(",");
 
+// timers
 var timer5minutes = 600000;
 var timer30minutes = timer5minutes*6;
 
@@ -43,9 +44,6 @@ if (screen.width <= 480){
   var ca_long = -122.193457;
 }
 
-// var offset_top = 900;
-// var bottomOffset = 200;
-
 // load fire scrollbar------------------------------------------------------------------------------------------
 var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json";
 var overlayString=``;
@@ -53,13 +51,13 @@ var overlayTimer;
 var markerArray = {};
 
 function loadSidebar(){
-  console.log("are we getting here");
+  console.log("loading sidebar");
   d3.json(calfireDataURL).then(function(caldata){
     blockdata = caldata;
     caldata.forEach(function(c,cIDX){
       // center map on top fire
       if (cIDX == 0){
-        map.setView([c.Lat,c.Lon], c.Zoom);
+        map.setView([c.Lat,c.Lon-ca_offset], c.Zoom);
       }
       overlayString += `
         ${(cIDX == 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
@@ -75,10 +73,6 @@ function loadSidebar(){
       `;
     })
     document.getElementById("list-of-fires").innerHTML = overlayString;
-
-    setTimeout(function(){
-      map.setView([caldata[0].Lat,caldata[0].Lon-ca_offset], caldata[0].Zoom);
-    },10);
 
     caldata.forEach(function(c,cIDX){
       html_str = `
@@ -115,7 +109,11 @@ function loadSidebar(){
           $(".fire-block").removeClass("active");
           this.classList.add("active");
           blockIDX = _currentblock.id.split("block")[1];
-          map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset], blockdata[blockIDX].Zoom);
+          if (blockdata[blockIDX].Zoom){
+            map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset], blockdata[blockIDX].Zoom);
+          } else {
+            map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset],9);
+          }
           if (screen.width >= 480){
             markerArray[blockIDX].openPopup();
           }
