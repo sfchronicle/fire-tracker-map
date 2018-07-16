@@ -53,7 +53,7 @@
 
   <div class="external-link"><a href="https://www.sfchronicle.com/california-wildfires-2018/" target="_blank"><i class="fa fa-external-link"></i>Complete coverage of the 2018 California fire season</a></div>
 
-  <div id="list-of-fires" class="list-of-fires"></div>
+  <%= t.include("partials/_list_of_fires.html") %>
 
   <div class="info-container">
     <div class="entry"><span class="credit-hed">Methodology:</span>Fires are labeled when they are larger than 500 acres, cause damage to property, or when people are injured or killed as a result of the fire. Fire labels were last updated at <%=json.FireData[0].Update %>.</div>
@@ -99,7 +99,11 @@
   </div>
 </div>
 
-<script src="app.js?21" async></script>
+<script>
+  var blockdata = <%= JSON.stringify(json.FireData) %>;
+</script>
+
+<script src="app.js?23" async></script>
 
 </body>
 </html>

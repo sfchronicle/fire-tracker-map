@@ -50,37 +50,38 @@ var overlayString=``;
 var overlayTimer;
 var markerArray = {};
 
-var loadSidebar = function(){
-  console.log("loading sidebar");
-  document.getElementById("list-of-fires").innerHTML = "";
-  return new Promise(function(ok,fail){
+// var loadSidebar = function(){
+//   console.log("loading sidebar");
+//   document.getElementById("list-of-fires").innerHTML = "";
+//   return new Promise(function(ok,fail){
+//
+//     d3.json(calfireDataURL).then(function(caldata){
+//
+//       blockdata = caldata;
+//       overlayString = ``;
+//       caldata.forEach(function(c,cIDX){
+//         // center map on top fire
+//         if (cIDX == 0){
+//           map.setView([c.Lat,c.Lon-ca_offset], c.Zoom);
+//         }
+//         overlayString += `
+//           ${(cIDX == 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
+//             ${(c.Containment == "100%") ? `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_contained_GR.png"></img>${c.FireName}</div>` : `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_burning_GR.png"></img>${c.FireName}</div>`}
+//             <div class="fire-desc">${c.Description}</div>
+//             <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
+//             <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
+//             ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
+//             ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
+//             ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
+//             <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+//           </div>
+//         `;
+//       })
+//       document.getElementById("list-of-fires").innerHTML = overlayString;
+//       ok();
 
-    d3.json(calfireDataURL).then(function(caldata){
-
-      blockdata = caldata;
-      overlayString = ``;
-      caldata.forEach(function(c,cIDX){
-        // center map on top fire
-        if (cIDX == 0){
-          map.setView([c.Lat,c.Lon-ca_offset], c.Zoom);
-        }
-        overlayString += `
-          ${(cIDX == 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
-            ${(c.Containment == "100%") ? `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_contained_GR.png"></img>${c.FireName}</div>` : `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_burning_GR.png"></img>${c.FireName}</div>`}
-            <div class="fire-desc">${c.Description}</div>
-            <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
-            <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
-            ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
-            ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
-            ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
-            <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
-          </div>
-        `;
-      })
-      document.getElementById("list-of-fires").innerHTML = overlayString;
-      ok();
-
-      caldata.forEach(function(c,cIDX){
+setTimeout(function(){
+      blockdata.forEach(function(c,cIDX){
         html_str = `
             <div class="fire-name">${c.FireName}</div>
             <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
@@ -97,11 +98,13 @@ var loadSidebar = function(){
         }
         markerArray[cIDX] = tempmarker;
       })
+      markerArray[0].openPopup();
+},100);
 
-    });
-  });
-
-}
+    // });
+//   });
+//
+// }
 
 // event listeners to center on any fire ------------------------------------------------------------------------
 
@@ -130,12 +133,14 @@ var LoadSidebarEvents = function(){
   }
 };
 
+LoadSidebarEvents()
+
 // make sure that sidebar elements exist before putting event listeners on them
-loadSidebar().then(()=>LoadSidebarEvents());
-overlayTimer = setInterval(function() {
-  console.log("reloading the sidebar");
-  loadSidebar().then(()=>LoadSidebarEvents());
-}, timer5minutes);
+// loadSidebar().then(()=>LoadSidebarEvents());
+// overlayTimer = setInterval(function() {
+//   console.log("reloading the sidebar");
+//   loadSidebar().then(()=>LoadSidebarEvents());
+// }, timer5minutes);
 
 // build map ----------------------------------------------------------------------------------------------------
 
@@ -154,7 +159,7 @@ var map = L.map("map-leaflet", {
   attributionControl: false
 });
 
-// map.setView([ca_lat,(ca_long-ca_offset)],zoom_deg);
+map.setView([blockdata[0].Lat,(blockdata[0].Lon-ca_offset)],blockdata[0].Zoom);
 
 // initializing the svg layer
 L.svg().addTo(map);
