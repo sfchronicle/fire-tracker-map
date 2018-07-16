@@ -169,24 +169,31 @@ L.svg().addTo(map);
 //     style: 'mapbox://styles/emro/cjbib4t5e089k2sm7j3xygp50'
 // }).addTo(map);
 
-L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}', {
-	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-	subdomains: 'abcd',
-	minZoom: 0,
-	maxZoom: 18,
-	ext: 'png'
-}).addTo(map);
+// L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}', {
+// 	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+// 	subdomains: 'abcd',
+// 	minZoom: 0,
+// 	maxZoom: 18,
+// 	ext: 'png'
+// }).addTo(map);
 
 // L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png', {
 // 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
 // 	subdomains: 'abcd',
+//   minZoom: 0,
 // 	maxZoom: 19
 // }).addTo(map);
 
-var attribution = L.control.attribution();
-attribution.setPrefix('');
-attribution.addAttribution('Map data: <a href="http://openstreetmap.org/copyright" target="_blank">© OpenStreetMap</a> <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a> | <a href="https://www.mapbox.com/map-feedback/" target="_blank" class="mapbox-improve-map">Improve this map</a>');
-attribution.addTo(map);
+var Wikimedia = L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
+	attribution: '<a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>',
+	minZoom: 1,
+	maxZoom: 19
+}).addTo(map);
+
+// var attribution = L.control.attribution();
+// attribution.setPrefix('');
+// attribution.addAttribution('Map data: <a href="http://openstreetmap.org/copyright" target="_blank">© OpenStreetMap</a> <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a> | <a href="https://www.mapbox.com/map-feedback/" target="_blank" class="mapbox-improve-map">Improve this map</a>');
+// attribution.addTo(map);
 
 if (screen.width <= 480){
   L.control.zoom({
@@ -389,18 +396,13 @@ function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount
     d3.json(nasaDataURL).then(function(nasa){
       layers[calendarCount] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
       layerstoggle[calendarCount] = 1;
-      // layers.push(L.geoJSON(nasa,{style: nowstyle}).addTo(map));
-      // layerstoggle.push(1);
     });
   } else {
     d3.json(nasaDataURL).then(function(nasa){
       layers[calendarCount] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
       layerstoggle[calendarCount] = 1;
-      // layers.push(L.geoJSON(nasa,{style: daystyle}).addTo(map));
-      // layerstoggle.push(1);
     });
   }
-  // return calendarCount++;
 }
 
 // turning these calendar buttons into actual buttons
