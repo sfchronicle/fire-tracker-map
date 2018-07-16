@@ -13,7 +13,7 @@ path {
   background: rgba(255,255,255,0.7);
   padding: 0 10px;
   font-size: 25px;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   border: 1px solid @black;
   display: none;
   pointer: cursor;
@@ -91,11 +91,13 @@ path {
   left: 20px;
   bottom: 20px;
   overflow-y: scroll;
-  max-width: 40%;
+  width: 40%;
+  max-width: 600px;
   -webkit-transition: all 500ms linear;
   -ms-transition: all 500ms linear;
   transition: all 500ms linear;
   @media @tablet {
+    width: 50%;
     max-width: 50%;
   }
   @media @phone-horiz {
@@ -103,6 +105,7 @@ path {
     bottom: 0px;
     left: 0px;
     right: 0px;
+    width: 100%;
     max-width: 100%;
   }
   &.big-leaflet-map {
