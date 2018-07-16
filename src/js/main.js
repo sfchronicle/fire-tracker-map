@@ -185,15 +185,14 @@ L.svg().addTo(map);
 // }).addTo(map);
 
 var Wikimedia = L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
-	attribution: '<a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>',
 	minZoom: 1,
 	maxZoom: 19
 }).addTo(map);
 
-// var attribution = L.control.attribution();
+var attribution = L.control.attribution();
 // attribution.setPrefix('');
-// attribution.addAttribution('Map data: <a href="http://openstreetmap.org/copyright" target="_blank">© OpenStreetMap</a> <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a> | <a href="https://www.mapbox.com/map-feedback/" target="_blank" class="mapbox-improve-map">Improve this map</a>');
-// attribution.addTo(map);
+attribution.addAttribution('Map data: <a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>');
+attribution.addTo(map);
 
 if (screen.width <= 480){
   L.control.zoom({
