@@ -12,6 +12,9 @@
       <div class="fire-desc"><%=c.Description%></div>
       <div class="fire-acreage"><span class="fire-info-type">Acreage:</span><%=c.Acreage%></div>
       <div class="fire-containment"><span class="fire-info-type">Containment:</span><%=c.Containment %></div>
+      <% if (c.Deaths){ %>
+        <div class="fire-damage"><span class="fire-info-type">Deaths:</span><%=c.Deaths%></div>
+      <% } %>
       <% if (c.Injuries){ %>
         <div class="fire-damage"><span class="fire-info-type">Injuries:</span><%=c.Injuries%></div>
       <% } %>
