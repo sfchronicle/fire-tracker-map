@@ -2,10 +2,6 @@ body {
   pointer-events: all;
 }
 
-path {
-  fill-opacity: 0.3 !important;
-}
-
 #map-expand {
   position: fixed;
   bottom: 50%;
@@ -295,13 +291,13 @@ path {
     height: 15px;
     width: 15px;
     margin-bottom: -2px;
-    background-color: rgba(242, 165, 0, 0.3);
+    background-color: lighten(@day,40%);
     border-radius: 20px;
   }
 
   .now-icon {
-    border: 2px solid @nowlayer;
-    background-color: rgba(236, 28, 36, 0.3);
+    border: 3px solid @now;
+    background-color: lighten(@now,20%);
   }
   .now {
     border: 2px solid @now;
@@ -468,7 +464,7 @@ path {
   }
   &.nowbox {
     stroke: @now;
-    fill-opacity: 0.6;
+    fill-opacity: 0.7;
     fill: white;
     &.active {
       fill-opacity: 1;

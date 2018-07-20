@@ -1,5 +1,6 @@
 require("./lib/social"); //Do not delete
 var d3 = require('d3');
+require("./lib/leaflet-mapbox-gl");
 
 // format numbers
 var formatthousands = d3.format(",");
@@ -25,10 +26,11 @@ function formatDate(date,monSTR) {
   hours = hours ? hours : 12; // the hour '0' should be '12'
   minutes = minutes < 10 ? '0'+minutes : minutes;
   var strTime = hours + ':' + minutes + ' ' + ampm;
+  // return monSTR + ". " + date.getDate() + ", " + date.getFullYear() + ", at " + strTime;
   return strTime + " "+monSTR + ". " + date.getDate() + ", " + date.getFullYear();
 }
 var max_zoom_deg = 12;
-var min_zoom_deg = 3;
+var min_zoom_deg = 4;
 
 if (screen.width <= 480){
   var ca_offset = 0;
@@ -42,7 +44,70 @@ if (screen.width <= 480){
   var ca_long = -122.193457;
 }
 
+// load fire scrollbar------------------------------------------------------------------------------------------
+var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json";
+var overlayString=``;
+var overlayTimer;
+var markerArray = {};
+
+// var loadSidebar = function(){
+//   console.log("loading sidebar");
+//   document.getElementById("list-of-fires").innerHTML = "";
+//   return new Promise(function(ok,fail){
+//
+//     d3.json(calfireDataURL).then(function(caldata){
+//
+//       blockdata = caldata;
+//       overlayString = ``;
+//       caldata.forEach(function(c,cIDX){
+//         // center map on top fire
+//         if (cIDX == 0){
+//           map.setView([c.Lat,c.Lon-ca_offset], c.Zoom);
+//         }
+//         overlayString += `
+//           ${(cIDX == 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
+//             ${(c.Containment == "100%") ? `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_contained_GR.png"></img>${c.FireName}</div>` : `<div class="fire-name"><img class="fire-name-image" src="./assets/graphics/fireicon_burning_GR.png"></img>${c.FireName}</div>`}
+//             <div class="fire-desc">${c.Description}</div>
+//             <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
+//             <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
+//             ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
+//             ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
+//             ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
+//             <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+//           </div>
+//         `;
+//       })
+//       document.getElementById("list-of-fires").innerHTML = overlayString;
+//       ok();
+
+setTimeout(function(){
+      blockdata.forEach(function(c,cIDX){
+        html_str = `
+            <div class="fire-name">${c.FireName}</div>
+            <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
+            <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
+            ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
+            ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
+            ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
+            <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+        `;
+        if (c.Containment == "100%"){
+          var tempmarker = L.marker([c.Lat, c.Lon], {icon: containedIcon}).addTo(map).bindPopup(html_str);
+        } else {
+          var tempmarker = L.marker([c.Lat, c.Lon], {icon: activeIcon}).addTo(map).bindPopup(html_str);
+        }
+        markerArray[cIDX] = tempmarker;
+      })
+      markerArray[0].openPopup();
+},100);
+
+    // });
+//   });
+//
+// }
+
 // event listeners to center on any fire ------------------------------------------------------------------------
+
 var LoadSidebarEvents = function(){
   var fireboxes = document.getElementsByClassName("fire-block");
   var currentblock,blockIDX;
@@ -68,7 +133,14 @@ var LoadSidebarEvents = function(){
   }
 };
 
-LoadSidebarEvents();
+LoadSidebarEvents()
+
+// make sure that sidebar elements exist before putting event listeners on them
+// loadSidebar().then(()=>LoadSidebarEvents());
+// overlayTimer = setInterval(function() {
+//   console.log("reloading the sidebar");
+//   loadSidebar().then(()=>LoadSidebarEvents());
+// }, timer5minutes);
 
 // build map ----------------------------------------------------------------------------------------------------
 
@@ -91,6 +163,26 @@ map.setView([blockdata[0].Lat,(blockdata[0].Lon-ca_offset)],blockdata[0].Zoom);
 
 // initializing the svg layer
 L.svg().addTo(map);
+
+// var gl = L.mapboxGL({
+//     accessToken: 'pk.eyJ1IjoiZW1ybyIsImEiOiJjaXl2dXUzMGQwMDdsMzJuM2s1Nmx1M29yIn0._KtME1k8LIhloMyhMvvCDA',
+//     style: 'mapbox://styles/emro/cjbib4t5e089k2sm7j3xygp50'
+// }).addTo(map);
+
+// L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}', {
+// 	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+// 	subdomains: 'abcd',
+// 	minZoom: 0,
+// 	maxZoom: 18,
+// 	ext: 'png'
+// }).addTo(map);
+
+// L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png', {
+// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+// 	subdomains: 'abcd',
+//   minZoom: 0,
+// 	maxZoom: 19
+// }).addTo(map);
 
 var Wikimedia = L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
 	minZoom: 1,
@@ -128,25 +220,6 @@ var MapIcon = L.Icon.extend({
 var activeIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_burning_GR.png?'});
 var containedIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_contained_GR.png?'});
 
-var markerArray = {};
-blockdata.forEach(function(c,cIDX){
-  html_str = `
-      <div class="fire-name">${c.FireName}</div>
-      <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
-      <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
-      ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
-      ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
-      ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
-      <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
-  `;
-  if (c.Containment == "100%"){
-    var tempmarker = L.marker([c.Lat, c.Lon], {icon: containedIcon}).addTo(map).bindPopup(html_str);
-  } else {
-    var tempmarker = L.marker([c.Lat, c.Lon], {icon: activeIcon}).addTo(map).bindPopup(html_str);
-  }
-  markerArray[cIDX] = tempmarker;
-})
-markerArray[0].openPopup();
 
 // load NOAA data -----------------------------------------------------------------------------------------------
 var fireDataURL = "https://extras.sfgate.com/editorial/wildfires/noaa.csv?";
@@ -270,8 +343,8 @@ var nasa_timer;
 var layers = [];
 var layerstoggle = [];
 var urlsList = [];
-var daystyle = {"color": "#f25a14","fillOpacity": 0.4,"weight": 1};
-var nowstyle = {"color": "#CC3400","fillOpacity": 0.7,"weight": 3};
+var daystyle = {"color": "#F2A500","fill-opacity": 0.4,"weight": 3};
+var nowstyle = {"color": "#D94100","fill-opacity": 0.8,"weight": 3};
 var calendarCount = 0;
 
 // fill in June data starting on the 23th (first day we began fire tracker)
@@ -300,7 +373,6 @@ var LoadJuly = function(){
           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
           urlsList.push(nasaDataURL);
           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
-
           calendarCount++;
         }
       } else {
@@ -348,9 +420,7 @@ var calendarButtons = function(){
         } else {
           if (IDX === (+calendarCount-1)){
             d3.json(urlsList[IDX]).then(function(nasa){
-              setTimeout(function(){
-                layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
-              },20)
+              layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
             });
             layerstoggle[IDX] = 1;
           } else {
