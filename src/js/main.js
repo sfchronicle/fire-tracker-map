@@ -55,8 +55,13 @@ var LoadSidebarEvents = function(){
         $(".fire-block").removeClass("active");
         this.classList.add("active");
         blockIDX = _currentblock.id.split("block")[1];
+        if (+blockdata[blockIDX].Zoom > 10){
+          ca_offset_new = ca_offset/(+blockdata[blockIDX].Zoom-9);
+        } else {
+          ca_offset_new = ca_offset;
+        }
         if (blockdata[blockIDX].Zoom){
-          map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset], blockdata[blockIDX].Zoom);
+          map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset_new], blockdata[blockIDX].Zoom);
         } else {
           map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset],9);
         }
@@ -87,7 +92,12 @@ var map = L.map("map-leaflet", {
   attributionControl: false
 });
 
-map.setView([blockdata[0].Lat,(blockdata[0].Lon-ca_offset)],blockdata[0].Zoom);
+if (+blockdata[0].Zoom > 10){
+  ca_offset_new = ca_offset/(+blockdata[0].Zoom-9);
+} else {
+  ca_offset_new = ca_offset;
+}
+map.setView([blockdata[0].Lat,(blockdata[0].Lon-ca_offset_new)],blockdata[0].Zoom);
 
 // initializing the svg layer
 L.svg().addTo(map);
@@ -350,7 +360,7 @@ var calendarButtons = function(){
             d3.json(urlsList[IDX]).then(function(nasa){
               setTimeout(function(){
                 layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
-              },100)
+              },300)
             });
             layerstoggle[IDX] = 1;
           } else {
@@ -608,7 +618,7 @@ document.getElementById("map-expand").addEventListener("click",function(e){
   setTimeout(function(){ map.invalidateSize()}, 500);
 })
 
-// event listener to expland sidebar fire blocks
+// event listener to expand sidebar fire blocks, aka event delegation is awesome
 document.getElementById("list-of-fires").addEventListener("click",function(e){
   if (e.target && e.target.matches("div.fire-name")){
     var targetId = e.target.classList[1].split("fire")[1];
