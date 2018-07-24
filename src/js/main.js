@@ -350,7 +350,7 @@ var calendarButtons = function(){
             d3.json(urlsList[IDX]).then(function(nasa){
               setTimeout(function(){
                 layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
-              },20)
+              },100)
             });
             layerstoggle[IDX] = 1;
           } else {
@@ -607,3 +607,12 @@ document.getElementById("map-expand").addEventListener("click",function(e){
   $('.fa').toggleClass('fa-expand fa-compress');
   setTimeout(function(){ map.invalidateSize()}, 500);
 })
+
+// event listener to expland sidebar fire blocks
+document.getElementById("list-of-fires").addEventListener("click",function(e){
+  if (e.target && e.target.matches("div.fire-name")){
+    var targetId = e.target.classList[1].split("fire")[1];
+    $(".firebody"+targetId).toggleClass("active inactive");
+    $(".fire"+targetId).find("i").toggleClass("fa-angle-double-right fa-angle-double-down");
+  }
+});

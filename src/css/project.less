@@ -127,10 +127,30 @@ body {
   }
 }
 
+.fire-block {
+  .fire-name {
+    padding: 20px;
+  }
+  .fire-block-body {
+    visibility: hidden;
+    height: 0;
+    &.active {
+      padding-right: 20px;
+      padding-left: 20px;
+      padding-bottom: 20px;
+      visibility: visible;
+      height: auto;
+    }
+  }
+}
+
+.leaflet-popup-content {
+  padding: 20px;
+}
+
 .fire-block, .leaflet-popup-content {
   font-size: 16px;
   line-height: 1.2;
-  padding: 20px;
   cursor: pointer;
   border-top: 1px solid lighten(@light-gray,10%);
   &.active {
@@ -146,6 +166,14 @@ body {
   .fire-name {
     font-size: 18px;
     font-weight: 600;
+    img {
+      vertical-align: text-bottom;
+      margin-right: 5px;
+    }
+    .fa {
+      float: right;
+      font-size: 30px;
+    }
   }
   .fire-desc {
     padding: 5px 0;

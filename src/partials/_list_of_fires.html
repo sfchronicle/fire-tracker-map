@@ -5,24 +5,30 @@
     <% } else { %>
       <div class="fire-block" id="block<%=cIDX%>">
     <% } %>
-      <div class="fire-name"><%=c.FireName%></div>
-      <% if (c.Link){ %>
-        <div class="story-link"><a href="<%=c.Link%>" target="_blank"><i class="fa fa-external-link"></i><%=c.LinkHed%></a></div>
+      <% if (c.Containment === "100%") { %>
+        <div class="fire-name fire<%=cIDX%>"><img src="./assets/graphics/fireicon_contained_GR.png?"></img><%=c.FireName%><i class="fa fa-angle-double-right"></i></div>
+      <% } else { %>
+        <div class="fire-name fire<%=cIDX%>"><img src="./assets/graphics/fireicon_burning_GR.png?"></img><%=c.FireName%><i class="fa fa-angle-double-right"></i></div>
       <% } %>
-      <div class="fire-desc"><%=c.Description%></div>
-      <div class="fire-acreage"><span class="fire-info-type">Acreage:</span><%=c.Acreage%></div>
-      <div class="fire-containment"><span class="fire-info-type">Containment:</span><%=c.Containment %></div>
-      <% if (c.Deaths){ %>
-        <div class="fire-damage"><span class="fire-info-type">Deaths:</span><%=c.Deaths%></div>
-      <% } %>
-      <% if (c.Injuries){ %>
-        <div class="fire-damage"><span class="fire-info-type">Injuries:</span><%=c.Injuries%></div>
-      <% } %>
-      <% if (c.Damage){ %>
-        <div class="fire-damage"><span class="fire-info-type">Damage:</span><%=c.Damage%></div>
-      <% } %>
-      <div class="fire-damage"><span class="fire-info-type">Fire began:</span><%=c.StartDate%></div>
-      <div class="fire-datasource"><span class="fire-info-type">Source:</span><a href="<%=c.Source%>" target="_blank"><%=c.Agency%></a></div>
+      <div class="fire-block-body firebody<%=cIDX%>">
+        <% if (c.Link){ %>
+          <div class="story-link"><a href="<%=c.Link%>" target="_blank"><i class="fa fa-external-link"></i><%=c.LinkHed%></a></div>
+        <% } %>
+        <div class="fire-desc"><%=c.Description%></div>
+        <div class="fire-acreage"><span class="fire-info-type">Acreage:</span><%=c.Acreage%></div>
+        <div class="fire-containment"><span class="fire-info-type">Containment:</span><%=c.Containment %></div>
+        <% if (c.Deaths){ %>
+          <div class="fire-damage"><span class="fire-info-type">Deaths:</span><%=c.Deaths%></div>
+        <% } %>
+        <% if (c.Injuries){ %>
+          <div class="fire-damage"><span class="fire-info-type">Injuries:</span><%=c.Injuries%></div>
+        <% } %>
+        <% if (c.Damage){ %>
+          <div class="fire-damage"><span class="fire-info-type">Damage:</span><%=c.Damage%></div>
+        <% } %>
+        <div class="fire-damage"><span class="fire-info-type">Fire began:</span><%=c.StartDate%></div>
+        <div class="fire-datasource"><span class="fire-info-type">Source:</span><a href="<%=c.Source%>" target="_blank"><%=c.Agency%></a></div>
+      </div>
     </div>
   <% }); %>
 </div>
