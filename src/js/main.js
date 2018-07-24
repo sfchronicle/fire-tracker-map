@@ -280,7 +280,7 @@ var nasa_timer;
 var layers = [];
 var layerstoggle = [];
 var urlsList = [];
-var daystyle = {"color": "#f25a14","fillOpacity": 0.4,"weight": 1};
+var daystyle = {"color": "#f25a14","fillOpacity": 0.2,"weight": 1,"opacity":0.4};
 var nowstyle = {"color": "#CC3400","fillOpacity": 0.7,"weight": 3};
 var calendarCount = 0;
 
@@ -331,7 +331,9 @@ LoadJune().then(()=>LoadJuly());
 function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount){
   if (month == currentmonth && day == currentday){
     d3.json(nasaDataURL).then(function(nasa){
-      layers[calendarCount] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
+      setTimeout(function(){
+        layers[calendarCount] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
+      },100)
       layerstoggle[calendarCount] = 1;
     });
   } else {
@@ -358,9 +360,7 @@ var calendarButtons = function(){
         } else {
           if (IDX === (+calendarCount-1)){
             d3.json(urlsList[IDX]).then(function(nasa){
-              setTimeout(function(){
-                layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
-              },300)
+              layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
             });
             layerstoggle[IDX] = 1;
           } else {
