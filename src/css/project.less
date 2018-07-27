@@ -2,6 +2,23 @@ body {
   pointer-events: all;
 }
 
+.external-link-container {
+  font-family: @bold-graphics;
+  padding-top: 5px;
+  text-align: center;
+  line-height: 1;
+  .external-link {
+    display: inline-block;
+    padding: 0 5px;
+    font-size: 16px;
+    text-align: center;
+    line-height: 1.2;
+    .fa {
+      padding-right: 5px;
+    }
+  }
+}
+
 #map-expand {
   position: fixed;
   bottom: 50%;
@@ -114,16 +131,6 @@ body {
 .fire-block {
   &:hover {
     background: lighten(@light-gray,5%);
-  }
-}
-
-.external-link {
-  padding: 0 20px;
-  font-size: 16px;
-  text-align: center;
-  line-height: 1.2;
-  .fa {
-    padding-right: 5px;
   }
 }
 

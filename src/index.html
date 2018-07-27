@@ -16,9 +16,15 @@
   </div>
   <div class="title">2018 California Fire Tracker</div>
   <%= t.include("partials/_fullwidthmap-social.html") %>
+  <div class="external-link-container">
+    <div class="external-link"><a href="https://www.sfchronicle.com/california-wildfires-2018/" target="_blank"><i class="fa fa-external-link"></i>Full fire coverage</a></div>
+    <div class="external-link"><a href="https://link.sfchronicle.com/join/signup" target="_blank"><i class="fa fa-external-link"></i>Newsletter signup</a></div>
+  </div>
   <div class="deck">This interactive map developed in The San Francisco Chronicle newsroom provides information on wildfires burning across California.
   <div class="instructions"><i class="fa fa-hand-o-right"></i>Click on the fire listings below to find them on the map, and zoom in to see details.</div>
 </div>
+
+
 
   <div class="legend-container">
     <div class="legend-element inline-legend"><img class="legend-img" src="./assets/graphics/fireicon_burning_GR.png"></img><div class="legend-text">Ongoing fire origin</div></div>
@@ -46,8 +52,6 @@
     <div class="popup" id="popup-airquality-explanation"><i class="fa fa-hand-o-right"></i>What is air quality data?</div>
   </div>
   <div class="timestamp" id="airDate"></div>
-
-  <div class="external-link"><a href="https://www.sfchronicle.com/california-wildfires-2018/" target="_blank"><i class="fa fa-external-link"></i>Complete coverage of the 2018 California fire season</a></div>
 
   <%= t.include("partials/_list_of_fires.html") %>
 
