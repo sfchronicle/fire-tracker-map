@@ -113,14 +113,17 @@ attribution.addAttribution('Map data: <a href="https://wikimediafoundation.org/w
 attribution.addTo(map);
 
 if (screen.width <= 480){
+  L.control.scale({position:"bottomleft"}).addTo(map);
   L.control.zoom({
-       position:'topright'
+       position:'bottomleft'
   }).addTo(map);
 } else {
+  L.control.scale({position:"bottomright"}).addTo(map);
   L.control.zoom({
        position:'bottomright'
   }).addTo(map);
 }
+
 
 // add fire icons to label fires ----------------------------------------------------------------
 var TallMapIcon = L.Icon.extend({
