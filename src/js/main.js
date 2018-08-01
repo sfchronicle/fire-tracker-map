@@ -42,38 +42,38 @@ if (screen.width <= 480){
   var ca_long = -122.193457;
 }
 
-// event listeners to center on any fire ------------------------------------------------------------------------
-var LoadSidebarEvents = function(){
-  var fireboxes = document.getElementsByClassName("fire-block");
-  var currentblock,blockIDX;
-  for (var fidx=0; fidx<fireboxes.length; fidx++){
-    currentblock = fireboxes[fidx];
-    // we need a closure to get event listeners incremented properly
-    (function(_currentblock){
-      _currentblock.addEventListener("click",function(){
-        map.closePopup();
-        $(".fire-block").removeClass("active");
-        this.classList.add("active");
-        blockIDX = _currentblock.id.split("block")[1];
-        if (+blockdata[blockIDX].Zoom > 10){
-          ca_offset_new = ca_offset/(+blockdata[blockIDX].Zoom-9);
-        } else {
-          ca_offset_new = ca_offset;
-        }
-        if (blockdata[blockIDX].Zoom){
-          map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset_new], blockdata[blockIDX].Zoom);
-        } else {
-          map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset],9);
-        }
-        if (screen.width >= 480){
-          markerArray[blockIDX].openPopup();
-        }
-      });
-    })(currentblock);
-  }
-};
-
-LoadSidebarEvents();
+// // event listeners to center on any fire ------------------------------------------------------------------------
+// var LoadSidebarEvents = function(){
+//   var fireboxes = document.getElementsByClassName("fire-block");
+//   var currentblock,blockIDX;
+//   for (var fidx=0; fidx<fireboxes.length; fidx++){
+//     currentblock = fireboxes[fidx];
+//     // we need a closure to get event listeners incremented properly
+//     (function(_currentblock){
+//       _currentblock.addEventListener("click",function(){
+//         map.closePopup();
+//         $(".fire-block").removeClass("active");
+//         this.classList.add("active");
+//         blockIDX = _currentblock.id.split("block")[1];
+//         if (+blockdata[blockIDX].Zoom > 10){
+//           ca_offset_new = ca_offset/(+blockdata[blockIDX].Zoom-9);
+//         } else {
+//           ca_offset_new = ca_offset;
+//         }
+//         if (blockdata[blockIDX].Zoom){
+//           map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset_new], blockdata[blockIDX].Zoom);
+//         } else {
+//           map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset],9);
+//         }
+//         if (screen.width >= 480){
+//           markerArray[blockIDX].openPopup();
+//         }
+//       });
+//     })(currentblock);
+//   }
+// };
+//
+// LoadSidebarEvents();
 
 // build map ----------------------------------------------------------------------------------------------------
 
@@ -617,9 +617,34 @@ document.getElementById("map-expand").addEventListener("click",function(e){
 
 // event listener to expand sidebar fire blocks, aka event delegation is awesome
 document.getElementById("list-of-fires").addEventListener("click",function(e){
-  if (e.target && e.target.matches("div.fire-name")){
-    var targetId = e.target.classList[1].split("fire")[1];
+  if (e.target){
+    var el = e.target;
+    while (el && Array.from(el.classList).indexOf("fire-block") === -1 ) {
+       el = el.parentNode;
+    }
+    var targetId = el.id.split("block")[1];
+  }
+
+  if (targetId){
     $(".firebody"+targetId).toggleClass("active inactive");
     $(".fire"+targetId).find("i").toggleClass("fa-angle-double-right fa-angle-double-down");
+
+    map.closePopup();
+    $(".fire-block").removeClass("active");
+    document.getElementById("block"+targetId).classList.add("active");
+    if (+blockdata[targetId].Zoom > 10){
+      ca_offset_new = ca_offset/(+blockdata[targetId].Zoom-9);
+    } else {
+      ca_offset_new = ca_offset;
+    }
+    if (blockdata[targetId].Zoom){
+      map.setView([blockdata[targetId].Lat,blockdata[targetId].Lon-ca_offset_new], blockdata[targetId].Zoom);
+    } else {
+      map.setView([blockdata[targetId].Lat,blockdata[targetId].Lon-ca_offset],9);
+    }
+    if (screen.width >= 480){
+      markerArray[targetId].openPopup();
+    }
   }
+
 });
