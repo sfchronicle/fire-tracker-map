@@ -313,12 +313,11 @@ var LoadJuly = function(){
           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
           urlsList.push(nasaDataURL);
           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
-
           calendarCount++;
         }
       } else {
         num_days_in_month = daysInMonth(monthIDX,2018);
-        for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
+        for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
           urlsList.push(nasaDataURL);
           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
@@ -347,38 +346,33 @@ function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount
   }
 }
 
-// turning these calendar buttons into actual buttons
-var calendarButtons = function(){
-  var dayB;
-  var calendar_buttons = document.getElementsByClassName("clickablerect");
-  for (var t = 0; t <calendar_buttons.length; t++){
-    dayB = calendar_buttons[t];
-    (function (dayB) {
-      dayB.addEventListener('click', function(){
-        var IDX = +dayB.id.split("date")[1];
-        if (layerstoggle[IDX] == 1) {
-          map.removeLayer(layers[IDX]);
-          layerstoggle[IDX] = 0;
-          dayB.classList.remove("active");
-        } else {
-          if (IDX === (+calendarCount-1)){
-            d3.json(urlsList[IDX]).then(function(nasa){
-              layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
-            });
-            layerstoggle[IDX] = 1;
-          } else {
-            d3.json(urlsList[IDX]).then(function(nasa){
-              layers[IDX] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
-            });
-            layerstoggle[IDX] = 1;
-          }
-          dayB.classList.add("active");
-        }
-      });
-    })(dayB);
-  }
-};
 
+// event listener to toggle layers via calendar buttons, aka event delegation is awesome
+var calendarButtons = function(){
+  document.getElementById("calendar").addEventListener("click",function(e){
+    if (e.target && (Array.from(e.target.classList).indexOf("clickablerect") > -1)){
+      var IDX = +e.target.id.split("date")[1];
+      if (layerstoggle[IDX] == 1) {
+        map.removeLayer(layers[IDX]);
+        layerstoggle[IDX] = 0;
+        e.target.classList.remove("active");
+      } else {
+        if (IDX === (+calendarCount-1)){
+          d3.json(urlsList[IDX]).then(function(nasa){
+            layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
+          });
+          layerstoggle[IDX] = 1;
+        } else {
+          d3.json(urlsList[IDX]).then(function(nasa){
+            layers[IDX] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
+          });
+          layerstoggle[IDX] = 1;
+        }
+        e.target.classList.add("active");
+      }
+    }
+  });
+};
 
 // air quality layer ----------------------------------------------------------------------
 var pollution_toggle = 0;
