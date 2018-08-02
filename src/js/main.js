@@ -650,46 +650,41 @@ document.getElementById("list-of-fires").addEventListener("click",function(e){
 });
 
 
+// RSS parser
+var Feed = require('rss-to-json');
+ 
+Feed.load('https://www.sfchronicle.com/default/feed/2018-california-wildfires-feed-2063.php', function(err, rss){
 
-$(function(){
-  var url = 'https://www.sfchronicle.com/default/feed/2018-california-wildfires-feed-2063.php';
-  $.ajax({
-    type: 'GET',
-    url: "https://api.rss2json.com/v1/api.json?rss_url=" + url,
-    dataType: 'jsonp',
-    success: function(data) {  
-      var items = data.items.splice(0,3);
+  var items = rss.items.splice(0,3);
 
-      items.forEach(function(item){
+  items.forEach(function(item){
 
-        // Get title
-        var title = item.title;
-        // Get link
-        var link = item.link;
-        // Get pubdate and convert to AP style
-        var date = timeConverter(item.pubDate);
-        // Get image src
-        var imageURL = item.enclosure.link;
-        var lastSlash = imageURL.lastIndexOf("/");
-        imageURL = imageURL.replace(imageURL.substring(lastSlash+1), "premium_gallery_landscape.jpg");
+    // Get title
+    var title = item.title;
+    // Get link
+    var link = item.link;
+  
+    // Get first image src
+    var imageURL = item.media.content[0].url[0];
+    var lastSlash = imageURL.lastIndexOf("/");
+    imageURL = imageURL.replace(imageURL.substring(lastSlash+1), "premium_gallery_landscape.jpg");
 
-        // push each story html
-        var html = '<div class="story "><a target="_blank" href="'+link+'"><img src="'+imageURL+'"></a><div class="story-info"><label class="timestamp">'+date+'</label><h3><a target="_blank" href="'+link+'"><span class="latest-title">'+title+'</span></a></h3></div></div>';
-        $('.story.loading').remove();
-        $('.stories').append(html);
-      });
-    }
+    // push each story html
+    var html = '<div class="story "><a target="_blank" href="'+link+'"><img src="'+imageURL+'"></a><div class="story-info"><h3><a target="_blank" href="'+link+'"><span class="latest-title">'+title+'</span></a></h3></div></div>';
+    $('.story.loading').remove();
+    $('.stories').append(html);
   });
+  
 });
 
-function timeConverter(timeStamp){
-  var UNIX_timestamp = new Date(timeStamp.replace(/\s/, 'T')).getTime();
-  var a = new Date(UNIX_timestamp);
-  var months = ['Jan.','Feb.','March','April','May','June','July','Aug.','Sept.','Oct.','Nov.','Dec.'];
-  var year = a.getFullYear();
-  var month = months[a.getMonth()];
-  var day = a.getDate();
-  var time = month + ' ' + day + ', ' + year ;
-  return time;
-}
+
+// Close recirc and restore map height
+document.getElementById("closer").addEventListener("click",function() {
+  $('.latest-news').css('display', 'none');
+  $('#map-leaflet').css('height','100%');
+  $('#map-leaflet').css('top','0');
+  $('.map-overlay').css('top','20px');
+});
+
+
 
