@@ -1,0 +1,159 @@
+.latest-news {
+  padding: 10px 0;
+  width: 100%;
+  background:#fff;
+  box-shadow: 1px 1px 1px 1px #ccc;
+
+  .wrapper{
+    margin: 0 auto;
+    max-width: 1200px;
+    width:100%;
+
+    .info{
+      font-family: Pierpont-bold;
+      line-height: 1.2;
+      font-size: 16px;
+      color: #000;
+      text-align:center;
+      margin-bottom:10px;
+
+      a{
+        color:#000;
+
+        :hover{
+          color:#000;
+        }
+      }
+
+      @media @mobile{
+        margin-bottom:0;
+      }
+
+      h2{
+        margin: 0 0 1em;
+        display: inline-block;
+        border-bottom: 2px solid red;
+      }
+    }
+  }
+
+  .stories{
+      .display-flex;
+      .align-items(center);
+      .justify-content(space-around);
+      .flex-wrap(wrap);
+    }
+
+    .story-info{
+      align-self: flex-end;
+    }
+
+    .story{
+      .display-flex;
+      margin: 0 5px;
+      line-height:0;
+      .flex(0 0 28%);
+
+      @media @tablet-horiz{
+        .flex(0 0 48%);
+
+        &:nth-child(3){
+          display:none;
+        }
+      }  
+
+      &.loading{
+        height: 84.38px;
+
+        @media @mobile{
+          height:67.5px;
+        }
+
+        img{
+          width: 100%;
+
+          @media @mobile{
+            width:262px;
+          }
+        }
+      }
+
+      @media @mobile{
+        .flex(0 0 100%);
+        margin-bottom:10px;
+      }
+
+      img{
+        width:90px;
+
+        @media @mobile{
+          width:120px;
+        }
+      }
+
+      .timestamp{
+        line-height: 1.4;
+        padding:0 0 0 10px;
+        font-size: 10px;
+        font-family: sanchez-bold;
+        color: #a90000;
+      }
+
+      h3{
+        font-size:11px;
+        margin-left:10px;
+        line-height:1.2;
+      }
+    }
+
+  @media (max-width:666px) {
+  	padding: 15px;
+ 	}
+
+  img {
+  	width: 100%;
+  }
+
+  h3 {
+  	margin: 0 0 3px;
+    line-height: 32px;  	
+    font-family: @body;
+
+    @media (max-width:666px) {
+    	font-size: 18px;
+    	line-height: 24px;
+  	}
+  }
+
+  a span {
+  	color: #000;
+    border-bottom: 3px solid #EDBE22;
+
+    &.latest-title {
+    	border-bottom: none;
+    }
+
+    &:hover {
+    	color: #000;
+    }
+  }
+
+  p {
+  	font-family: @med-graphics;
+  	font-size: 18px;
+    line-height: 26px;
+    padding: 0;
+
+    @media (max-width:666px)  {
+    	display: none;
+  	}
+  }
+
+  .spacer {
+  	clear: both;
+  }
+
+  @media (max-width: 600px){
+    display: none;
+  }
+}
