@@ -78,8 +78,11 @@ if (screen.width <= 480){
 // build map ----------------------------------------------------------------------------------------------------
 
 // restrict panning outside of California
-var corner1 = L.latLng(44.006566, -133.289785),
-corner2 = L.latLng(30.711049, -110.635977),
+// var corner1 = L.latLng(44.006566, -133.289785),
+// corner2 = L.latLng(30.711049, -110.635977),
+// bounds = L.latLngBounds(corner1, corner2);
+var corner1 = L.latLng(52.131066, -152.034853),
+corner2 = L.latLng(12.117664, -54.181059),
 bounds = L.latLngBounds(corner1, corner2);
 
 // initialize map with center position and zoom levels
@@ -652,7 +655,7 @@ document.getElementById("list-of-fires").addEventListener("click",function(e){
 
 // RSS parser
 var Feed = require('rss-to-json');
- 
+
 Feed.load('https://www.sfchronicle.com/default/feed/2018-california-wildfires-feed-2063.php', function(err, rss){
 
   var items = rss.items.splice(0,3);
@@ -663,7 +666,7 @@ Feed.load('https://www.sfchronicle.com/default/feed/2018-california-wildfires-fe
     var title = item.title;
     // Get link
     var link = item.link;
-  
+
     // Get first image src
     var imageURL = item.media.content[0].url[0];
     var lastSlash = imageURL.lastIndexOf("/");
@@ -674,7 +677,7 @@ Feed.load('https://www.sfchronicle.com/default/feed/2018-california-wildfires-fe
     $('.story.loading').remove();
     $('.stories').append(html);
   });
-  
+
 });
 
 
@@ -685,6 +688,3 @@ document.getElementById("closer").addEventListener("click",function() {
   $('#map-leaflet').css('top','0');
   $('.map-overlay').css('top','20px');
 });
-
-
-
