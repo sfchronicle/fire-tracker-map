@@ -1,5 +1,4 @@
 .latest-news {
-  display: none;
   padding: 10px 0;
   width: 100%;
   height: 71px;
@@ -41,7 +40,7 @@
 
   .stories{
       .display-flex;
-      .align-items(center);
+      .align-items(flex-end);
       .justify-content(space-around);
       .flex-wrap(wrap);
     }
@@ -65,7 +64,7 @@
       }  
 
       &.loading{
-        height: 84.38px;
+        height: 61.38px;
 
         @media @mobile{
           height:67.5px;
@@ -73,11 +72,16 @@
 
         img{
           width: 100%;
+          max-width: 300px;
 
           @media @mobile{
             width:262px;
           }
         }
+      }
+
+      &.no-img{
+        max-width: 246px;
       }
 
       @media @mobile{

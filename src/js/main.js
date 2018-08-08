@@ -667,15 +667,25 @@ Feed.load('https://www.sfchronicle.com/default/feed/2018-california-wildfires-fe
     // Get link
     var link = item.link;
 
-    // Get first image src
-    var imageURL = item.media.content[0].url[0];
-    var lastSlash = imageURL.lastIndexOf("/");
-    imageURL = imageURL.replace(imageURL.substring(lastSlash+1), "premium_gallery_landscape.jpg");
+    // check if article contains image
+    if(item.media){
+     
+      // Get first image src
+      var imageURL = item.media.content[0].url[0];
+      var lastSlash = imageURL.lastIndexOf("/");
+      imageURL = imageURL.replace(imageURL.substring(lastSlash+1), "premium_gallery_landscape.jpg");
 
-    // push each story html
-    var html = '<div class="story "><a target="_blank" href="'+link+'"><img src="'+imageURL+'"></a><div class="story-info"><h3><a target="_blank" href="'+link+'"><span class="latest-title">'+title+'</span></a></h3></div></div>';
-    $('.story.loading').remove();
-    $('.stories').append(html);
+      // push each story html
+      var html = '<div class="story "><a target="_blank" href="'+link+'"><img src="'+imageURL+'"></a><div class="story-info"><h3><a target="_blank" href="'+link+'"><span class="latest-title">'+title+'</span></a></h3></div></div>';
+      $('.story.loading').remove();
+      $('.stories').append(html);
+
+    }else{
+      var html = '<div class="story no-img"><div class="story-info"><h3><a target="_blank" href="'+link+'"><span class="latest-title">'+title+'</span></a></h3></div></div>';
+      $('.story.loading').remove();
+      $('.stories').append(html);
+    }
+
   });
 
 });
