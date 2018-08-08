@@ -333,6 +333,12 @@ var LoadJuly = function(){
 
 LoadJune().then(()=>LoadJuly());
 
+// adding PCT closures
+// #518268
+var pathstyle = {"color":"#FF7402","weight":5, "dashArray":"20,15"};
+var pctPath = L.geoJSON(pct,{style: pathstyle}).addTo(map);
+pctPath.bindPopup("Pacific Crest Trail Closure");
+
 function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount){
   if (month == currentmonth && day == currentday){
     d3.json(nasaDataURL).then(function(nasa){
