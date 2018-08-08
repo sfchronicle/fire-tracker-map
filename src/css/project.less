@@ -58,12 +58,14 @@ body {
 }
 
 #map-leaflet {
- height: calc(~"100% - 73px");
+ // height: calc(~"100% - 73px");
+ height: 100%;
  width: 100%;
  overflow: hidden;
  position: fixed;
  left: 0;
- top: 73px;
+ // top: 73px;
+ top:0;
  z-index: 0;
  @media @phone-horiz {
    height: 50%;
@@ -103,7 +105,8 @@ body {
   background: white;
   border: 1px solid @black;
   position: fixed;
-  top: 90px;
+  // top: 90px;
+  top:20px;
   left: 20px;
   bottom: 20px;
   overflow-y: scroll;
