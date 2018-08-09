@@ -20,7 +20,7 @@ function daysInMonth (month, year) {
 function formatDate(date,monSTR) {
   var hours = date.getHours();
   var minutes = date.getMinutes();
-  var ampm = hours >= 12 ? 'p.m. PST' : 'a.m. PST';
+  var ampm = hours >= 12 ? 'p.m. PDT' : 'a.m. PDT';
   hours = hours % 12;
   hours = hours ? hours : 12; // the hour '0' should be '12'
   minutes = minutes < 10 ? '0'+minutes : minutes;
@@ -143,6 +143,7 @@ var MapIcon = L.Icon.extend({
 });
 var activeIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_burning_GR.png?'});
 var containedIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_contained_GR.png?'});
+var closureIcon = new MapIcon({iconUrl: './assets/graphics/evacuation_icon.png'});
 
 var markerArray = {};
 blockdata.forEach(function(c,cIDX){
@@ -334,10 +335,11 @@ var LoadJuly = function(){
 LoadJune().then(()=>LoadJuly());
 
 // adding PCT closures
-// #518268
-var pathstyle = {"color":"#FF7402","weight":5, "dashArray":"20,15"};
+// "#FF7402"
+var pathstyle = {"color":"#333","weight":5, "dashArray":"20,15"};
 var pctPath = L.geoJSON(pct,{style: pathstyle}).addTo(map);
 pctPath.bindPopup("Pacific Crest Trail Closure");
+// L.marker(map.getCenter(pctPath), {icon: closureIcon}).addTo(map).bindPopup("Pacific Crest Trail Closure");
 
 function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount){
   if (month == currentmonth && day == currentday){
@@ -675,7 +677,7 @@ Feed.load('https://www.sfchronicle.com/default/feed/2018-california-wildfires-fe
 
     // check if article contains image
     if(item.media){
-     
+
       // Get first image src
       var imageURL = item.media.content[0].url[0];
       var lastSlash = imageURL.lastIndexOf("/");
