@@ -664,7 +664,7 @@ document.getElementById("list-of-fires").addEventListener("click",function(e){
 // RSS parser
 var Feed = require('rss-to-json');
 
-Feed.load('https://www.sfchronicle.com/default/feed/2018-california-wildfires-feed-2063.php', function(err, rss){
+Feed.load('https://extras.sfgate.com/editorial/wildfires/stories.xml', function(err, rss){
 
   var items = rss.items.splice(0,3);
 
