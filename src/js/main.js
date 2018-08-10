@@ -144,6 +144,7 @@ var MapIcon = L.Icon.extend({
 var activeIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_burning_GR.png?'});
 var containedIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_contained_GR.png?'});
 var closureIcon = new MapIcon({iconUrl: './assets/graphics/evacuation_icon.png'});
+var cameraIcon = new MapIcon({iconUrl: './assets/graphics/Wineries_icon.png?'});
 
 var markerArray = {};
 blockdata.forEach(function(c,cIDX){
@@ -164,6 +165,17 @@ blockdata.forEach(function(c,cIDX){
   markerArray[cIDX] = tempmarker;
 })
 markerArray[0].openPopup();
+
+cctv.data.forEach(function(c,cIDX){
+  var location = c.cctv.location;
+  var cctv_image = c.cctv.imageData.static.currentImageURL;
+  html_str = `
+      <div class="fire-name">${location.locationName}</div>
+      <div class="fire-acreage"><img style="width: 100%;" src="${cctv_image}" /></div>
+  `;
+  var tempmarker = L.marker([location.latitude, location.longitude], {icon: cameraIcon}).addTo(map).bindPopup(html_str);
+  markerArray[cIDX] = tempmarker;
+})
 
 // load NOAA data -----------------------------------------------------------------------------------------------
 var fireDataURL = "https://extras.sfgate.com/editorial/wildfires/noaa.csv?";
