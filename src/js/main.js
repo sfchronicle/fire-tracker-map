@@ -129,10 +129,10 @@ if (screen.width <= 480){
 
 
 // add fire icons to label fires ----------------------------------------------------------------
-var TallMapIcon = L.Icon.extend({
+var smallMapIcon = L.Icon.extend({
     options: {
-        iconSize:     [25,40],
-        iconAnchor:   [10,10],
+        iconSize:     [25,25],
+        iconAnchor:   [15,10],
     }
 });
 var MapIcon = L.Icon.extend({
@@ -143,7 +143,7 @@ var MapIcon = L.Icon.extend({
 });
 var activeIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_burning_GR.png?'});
 var containedIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_contained_GR.png?'});
-var closureIcon = new MapIcon({iconUrl: './assets/graphics/evacuation_icon.png'});
+var closureIcon = new smallMapIcon({iconUrl: './assets/graphics/warning_icon.png'});
 
 var markerArray = {};
 blockdata.forEach(function(c,cIDX){
@@ -164,6 +164,7 @@ blockdata.forEach(function(c,cIDX){
   markerArray[cIDX] = tempmarker;
 })
 markerArray[0].openPopup();
+
 
 // load NOAA data -----------------------------------------------------------------------------------------------
 var fireDataURL = "https://extras.sfgate.com/editorial/wildfires/noaa.csv?";
@@ -339,7 +340,8 @@ LoadJune().then(()=>LoadJuly());
 var pathstyle = {"color":"#333","weight":5, "dashArray":"20,15"};
 var pctPath = L.geoJSON(pct,{style: pathstyle}).addTo(map);
 pctPath.bindPopup("Pacific Crest Trail Closure");
-// L.marker(map.getCenter(pctPath), {icon: closureIcon}).addTo(map).bindPopup("Pacific Crest Trail Closure");
+L.marker([40.126070,-121.399524], {icon: closureIcon}).addTo(map).bindPopup("Pacific Crest Trail Closure");
+L.marker([38.495835,-119.766012], {icon: closureIcon}).addTo(map).bindPopup("Pacific Crest Trail Closure");
 
 function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount){
   if (month == currentmonth && day == currentday){
