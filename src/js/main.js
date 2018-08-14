@@ -340,7 +340,6 @@ LoadJune().then(()=>LoadJuly());
 var pathstyle = {"color":"#333","weight":5, "dashArray":"20,15"};
 var pctPath = L.geoJSON(pct,{style: pathstyle}).addTo(map);
 pctPath.bindPopup("Pacific Crest Trail Closure");
-L.marker([40.126070,-121.399524], {icon: closureIcon}).addTo(map).bindPopup("Pacific Crest Trail Closure");
 L.marker([38.495835,-119.766012], {icon: closureIcon}).addTo(map).bindPopup("Pacific Crest Trail Closure");
 
 function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount){

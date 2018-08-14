@@ -4,7 +4,7 @@
 # Params: subfolder, *project-name
 # (starred params are optional)
 
-# subfolder - Where the project should deploy (2018, tools, etc) 
+# subfolder - Where the project should deploy (2018, tools, etc)
 # NOTE: ^ this script will not create subfolders! They must already exist.
 # project-name (optional) - What the project should be called (the repo name by default)
 
@@ -12,8 +12,8 @@
 e="success"
 
 # Callout color for important info
-RED='\033[0;31m' 
-GREEN='\033[0;32m'  
+RED='\033[0;31m'
+GREEN='\033[0;32m'
 NC='\033[0m' # No color
 
 # Spinner graphic for the upload delay
@@ -40,7 +40,7 @@ fi
 if [ -z "$2" ]; then
 	# If no name supplied, we can assume it's the repo name
 	path="${PWD##*/}"
-else 
+else
 	# Use supplied name if there is one
 	path="$2"
 fi
@@ -52,6 +52,7 @@ else
 	echo "Exiting deploy script with error..."
 fi
 
+
 # Test if we can access the Projects folder
 if [ -d "/Volumes/SFGextras/Projects/" ]; then
   echo -e "${GREEN}SUCCESS:${NC} Accessed Projects folder."
@@ -59,7 +60,7 @@ if [ -d "/Volumes/SFGextras/Projects/" ]; then
   if [ -d "/Volumes/SFGextras/Projects/$1" ]; then
   	echo -e "${GREEN}SUCCESS:${NC} Accessed $1 folder."
   	# Prompt before we pull the trigger
-  	echo -e "All systems go. You are going to deploy ${RED}${PWD##*/}${NC} to the live Projects server in subfolder ${RED}$1${NC} with name ${RED}$path${NC}." 
+  	echo -e "All systems go. You are going to deploy ${RED}${PWD##*/}${NC} to the live Projects server in subfolder ${RED}$1${NC} with name ${RED}$path${NC}."
   	read -p "Proceed (Y/n)? " -n 1 -r
 		echo ""  # For spacing
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -83,7 +84,7 @@ if [ -d "/Volumes/SFGextras/Projects/" ]; then
 		  endpath="/Volumes/SFGextras/Projects/$1/$path/index.php"
 		  mv $startpath $endpath
 		  echo -e "${GREEN}DEPLOY COMPLETE.${NC} Exiting..."
-		else 
+		else
 			echo "INFO: User cancelled deployment. Exiting..."
 		fi
   else
