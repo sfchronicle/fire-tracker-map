@@ -4,4 +4,5 @@ temp
 .DS_Store
 npm-debug.log
 src/js/lib/*/**
-data
+data/*
+!data/PCT_allclosures.json
