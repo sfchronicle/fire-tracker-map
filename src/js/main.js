@@ -663,7 +663,7 @@ document.getElementById("list-of-fires").addEventListener("click",function(e){
 
 
 // RSS parser
-var Feed = require('rss-to-json');
+var Feed = require('./lib/rss');
 
 Feed.load('https://extras.sfgate.com/editorial/wildfires/stories.xml', function(err, rss){
 
