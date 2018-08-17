@@ -42,45 +42,9 @@ if (screen.width <= 480){
   var ca_long = -122.193457;
 }
 
-// // event listeners to center on any fire ------------------------------------------------------------------------
-// var LoadSidebarEvents = function(){
-//   var fireboxes = document.getElementsByClassName("fire-block");
-//   var currentblock,blockIDX;
-//   for (var fidx=0; fidx<fireboxes.length; fidx++){
-//     currentblock = fireboxes[fidx];
-//     // we need a closure to get event listeners incremented properly
-//     (function(_currentblock){
-//       _currentblock.addEventListener("click",function(){
-//         map.closePopup();
-//         $(".fire-block").removeClass("active");
-//         this.classList.add("active");
-//         blockIDX = _currentblock.id.split("block")[1];
-//         if (+blockdata[blockIDX].Zoom > 10){
-//           ca_offset_new = ca_offset/(+blockdata[blockIDX].Zoom-9);
-//         } else {
-//           ca_offset_new = ca_offset;
-//         }
-//         if (blockdata[blockIDX].Zoom){
-//           map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset_new], blockdata[blockIDX].Zoom);
-//         } else {
-//           map.setView([blockdata[blockIDX].Lat,blockdata[blockIDX].Lon-ca_offset],9);
-//         }
-//         if (screen.width >= 480){
-//           markerArray[blockIDX].openPopup();
-//         }
-//       });
-//     })(currentblock);
-//   }
-// };
-//
-// LoadSidebarEvents();
-
 // build map ----------------------------------------------------------------------------------------------------
 
 // restrict panning outside of California
-// var corner1 = L.latLng(44.006566, -133.289785),
-// corner2 = L.latLng(30.711049, -110.635977),
-// bounds = L.latLngBounds(corner1, corner2);
 var corner1 = L.latLng(52.131066, -152.034853),
 corner2 = L.latLng(12.117664, -54.181059),
 bounds = L.latLngBounds(corner1, corner2);
@@ -91,7 +55,6 @@ var map = L.map("map-leaflet", {
   maxZoom: max_zoom_deg,
   maxBounds: bounds,
   zoomControl: false,
-  // scrollWheelZoom: false,
   attributionControl: false
 });
 
@@ -111,7 +74,6 @@ var Wikimedia = L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.
 }).addTo(map);
 
 var attribution = L.control.attribution();
-// attribution.setPrefix('');
 attribution.addAttribution('Map data: <a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>');
 attribution.addTo(map);
 
@@ -127,6 +89,68 @@ if (screen.width <= 480){
   }).addTo(map);
 }
 
+// load sidebar --------------------------------------------------------------------------------
+var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json";
+var overlayString=``;
+var overlayTimer;
+var markerArray = {};
+
+var loadSidebar = function(){
+  console.log("loading sidebar");
+  document.getElementById("list-of-fires").innerHTML = "";
+  return new Promise(function(ok,fail){
+
+    d3.json(calfireDataURL).then(function(caldata){
+
+      blockdata = caldata;
+      overlayString = ``;
+      caldata.forEach(function(c,cIDX){
+        // center map on top fire
+        if (cIDX == 0){
+          map.setView([c.Lat,c.Lon-ca_offset], c.Zoom);
+        }
+        overlayString += `
+          ${(cIDX === 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
+
+            ${(c.Containment === "100%") ? `<div class="fire-name fire${cIDX}"><img class="fire-name-image" src="./assets/graphics/fireicon_contained_GR.png"></img>${c.FireName}<i class="fa fa-angle-double-right"></i></div>` : `<div class="fire-name fire${cIDX}"><img class="fire-name-image" src="./assets/graphics/fireicon_burning_GR.png"></img>${c.FireName}<i class="fa fa-angle-double-right"></i></div>`}
+
+            <div class="fire-block-body firebody${cIDX}">
+
+              ${(c.Link) ? `<div class="story-link"><a href="${c.Link}" target="_blank"><i class="fa fa-external-link"></i>${c.LinkHed}</a></div>` : ``}
+
+              <div class="fire-desc">${c.Description}</div>
+
+              <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
+
+              <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
+
+              ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
+
+              ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
+
+              ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
+
+              <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+
+              <div class="fire-datasource"><span class="fire-info-type">Source:</span><a href="${c.Source}?" target="_blank">${c.Agency}</a></div>
+
+            </div>
+          </div>
+        `;
+      })
+      document.getElementById("list-of-fires").innerHTML = overlayString;
+      document.getElementById("spreadsheetUpdate").innerHTML = caldata[0]["Update"];
+      ok();
+    });
+  });
+}
+
+// make sure that sidebar elements exist before putting event listeners on them
+loadSidebar().then(()=>LoadSidebarEvents());
+overlayTimer = setInterval(function() {
+  console.log("reloading the sidebar");
+  loadSidebar();
+}, timer5minutes);
 
 // add fire icons to label fires ----------------------------------------------------------------
 var smallMapIcon = L.Icon.extend({
@@ -336,7 +360,6 @@ var LoadJuly = function(){
 LoadJune().then(()=>LoadJuly());
 
 // adding PCT closures
-// "#FF7402"
 var pathstyle = {"color":"#333","weight":5, "dashArray":"20,15"};
 var pctPath = L.geoJSON(pct,{style: pathstyle}).addTo(map);
 pctPath.bindPopup("Pacific Crest Trail Closure");
@@ -628,39 +651,41 @@ document.getElementById("map-expand").addEventListener("click",function(e){
 })
 
 // event listener to expand sidebar fire blocks, aka event delegation is awesome
-document.getElementById("list-of-fires").addEventListener("click",function(e){
-  if (e.target){
-    var el = e.target;
-    while (el && Array.from(el.classList).indexOf("fire-block") === -1 ) {
-       el = el.parentNode;
+function LoadSidebarEvents(){
+  console.log("loading sidebar events");
+  document.getElementById("list-of-fires").addEventListener("click",function(e){
+    if (e.target){
+      var el = e.target;
+      while (el && Array.from(el.classList).indexOf("fire-block") === -1 ) {
+         el = el.parentNode;
+      }
+      var targetId = el.id.split("block")[1];
     }
-    var targetId = el.id.split("block")[1];
-  }
 
-  if (targetId){
-    $(".firebody"+targetId).toggleClass("active inactive");
-    $(".fire"+targetId).find("i").toggleClass("fa-angle-double-right fa-angle-double-down");
+    if (targetId){
+      $(".firebody"+targetId).toggleClass("active inactive");
+      $(".fire"+targetId).find("i").toggleClass("fa-angle-double-right fa-angle-double-down");
 
-    map.closePopup();
-    $(".fire-block").removeClass("active");
-    document.getElementById("block"+targetId).classList.add("active");
-    if (+blockdata[targetId].Zoom > 10){
-      ca_offset_new = ca_offset/(+blockdata[targetId].Zoom-9);
-    } else {
-      ca_offset_new = ca_offset;
+      map.closePopup();
+      $(".fire-block").removeClass("active");
+      document.getElementById("block"+targetId).classList.add("active");
+      if (+blockdata[targetId].Zoom > 10){
+        ca_offset_new = ca_offset/(+blockdata[targetId].Zoom-9);
+      } else {
+        ca_offset_new = ca_offset;
+      }
+      if (blockdata[targetId].Zoom){
+        map.setView([blockdata[targetId].Lat,blockdata[targetId].Lon-ca_offset_new], blockdata[targetId].Zoom);
+      } else {
+        map.setView([blockdata[targetId].Lat,blockdata[targetId].Lon-ca_offset],9);
+      }
+      if (screen.width >= 480){
+        markerArray[targetId].openPopup();
+      }
     }
-    if (blockdata[targetId].Zoom){
-      map.setView([blockdata[targetId].Lat,blockdata[targetId].Lon-ca_offset_new], blockdata[targetId].Zoom);
-    } else {
-      map.setView([blockdata[targetId].Lat,blockdata[targetId].Lon-ca_offset],9);
-    }
-    if (screen.width >= 480){
-      markerArray[targetId].openPopup();
-    }
-  }
 
-});
-
+  });
+}
 
 // RSS parser
 var Feed = require('./lib/rss');
