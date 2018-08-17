@@ -16,6 +16,17 @@ function daysInMonth (month, year) {
   return new Date(year, month, 0).getDate();
 }
 
+// generate random string
+function makeid() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 5; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
 // format dates
 function formatDate(date,monSTR) {
   var hours = date.getHours();
@@ -89,18 +100,39 @@ if (screen.width <= 480){
   }).addTo(map);
 }
 
+// add fire icons to label fires ----------------------------------------------------------------
+var smallMapIcon = L.Icon.extend({
+    options: {
+        iconSize:     [25,25],
+        iconAnchor:   [15,10],
+    }
+});
+var MapIcon = L.Icon.extend({
+    options: {
+        iconSize:     [25,25],
+        iconAnchor:   [10,10],
+    }
+});
+var activeIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_burning_GR.png?'});
+var containedIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_contained_GR.png?'});
+var closureIcon = new smallMapIcon({iconUrl: './assets/graphics/warning_icon.png'});
+
 // load sidebar --------------------------------------------------------------------------------
-var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json";
-var overlayString=``;
 var overlayTimer;
-var markerArray = {};
 
 var loadSidebar = function(){
   console.log("loading sidebar");
+
+  var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json?"+makeid();
+  console.log(calfireDataURL);
+  var overlayString=``;
+
   document.getElementById("list-of-fires").innerHTML = "";
   return new Promise(function(ok,fail){
 
     d3.json(calfireDataURL).then(function(caldata){
+
+      console.log(caldata);
 
       blockdata = caldata;
       overlayString = ``;
@@ -140,6 +172,28 @@ var loadSidebar = function(){
       })
       document.getElementById("list-of-fires").innerHTML = overlayString;
       document.getElementById("spreadsheetUpdate").innerHTML = caldata[0]["Update"];
+
+
+      var markerArray = {};
+      blockdata.forEach(function(c,cIDX){
+        html_str = `
+            <div class="fire-name">${c.FireName}</div>
+            <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
+            <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
+            ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
+            ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
+            ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
+            <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+        `;
+        if (c.Containment == "100%"){
+          var tempmarker = L.marker([c.Lat, c.Lon], {icon: containedIcon}).addTo(map).bindPopup(html_str);
+        } else {
+          var tempmarker = L.marker([c.Lat, c.Lon], {icon: activeIcon}).addTo(map).bindPopup(html_str);
+        }
+        markerArray[cIDX] = tempmarker;
+      })
+      markerArray[0].openPopup();
+
       ok();
     });
   });
@@ -151,44 +205,6 @@ overlayTimer = setInterval(function() {
   console.log("reloading the sidebar");
   loadSidebar();
 }, timer5minutes);
-
-// add fire icons to label fires ----------------------------------------------------------------
-var smallMapIcon = L.Icon.extend({
-    options: {
-        iconSize:     [25,25],
-        iconAnchor:   [15,10],
-    }
-});
-var MapIcon = L.Icon.extend({
-    options: {
-        iconSize:     [25,25],
-        iconAnchor:   [10,10],
-    }
-});
-var activeIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_burning_GR.png?'});
-var containedIcon = new MapIcon({iconUrl: './assets/graphics/fireicon_contained_GR.png?'});
-var closureIcon = new smallMapIcon({iconUrl: './assets/graphics/warning_icon.png'});
-
-var markerArray = {};
-blockdata.forEach(function(c,cIDX){
-  html_str = `
-      <div class="fire-name">${c.FireName}</div>
-      <div class="fire-acreage"><span class="fire-info-type">Acreage:</span>${c.Acreage}</div>
-      <div class="fire-containment"><span class="fire-info-type">Containment:</span>${c.Containment}</div>
-      ${c.Deaths ? `<div class="fire-damage"><span class="fire-info-type">Deaths:</span>${c.Deaths}</div>` : ''}
-      ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
-      ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
-      <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
-  `;
-  if (c.Containment == "100%"){
-    var tempmarker = L.marker([c.Lat, c.Lon], {icon: containedIcon}).addTo(map).bindPopup(html_str);
-  } else {
-    var tempmarker = L.marker([c.Lat, c.Lon], {icon: activeIcon}).addTo(map).bindPopup(html_str);
-  }
-  markerArray[cIDX] = tempmarker;
-})
-markerArray[0].openPopup();
-
 
 // load NOAA data -----------------------------------------------------------------------------------------------
 var fireDataURL = "https://extras.sfgate.com/editorial/wildfires/noaa.csv?";
