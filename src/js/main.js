@@ -119,6 +119,8 @@ var closureIcon = new smallMapIcon({iconUrl: './assets/graphics/warning_icon.png
 
 // load sidebar --------------------------------------------------------------------------------
 var overlayTimer;
+var markerArray = {};
+var markersGroup;
 
 var loadSidebar = function(){
   console.log("loading sidebar");
@@ -132,10 +134,9 @@ var loadSidebar = function(){
 
     d3.json(calfireDataURL).then(function(caldata){
 
-      console.log(caldata);
-
       blockdata = caldata;
       overlayString = ``;
+
       caldata.forEach(function(c,cIDX){
         // center map on top fire
         if (cIDX == 0){
@@ -173,8 +174,10 @@ var loadSidebar = function(){
       document.getElementById("list-of-fires").innerHTML = overlayString;
       document.getElementById("spreadsheetUpdate").innerHTML = caldata[0]["Update"];
 
-
-      var markerArray = {};
+      if (markersGroup != null){
+        map.removeLayer(markersGroup);
+      }
+      markerArray = {};
       blockdata.forEach(function(c,cIDX){
         html_str = `
             <div class="fire-name">${c.FireName}</div>
@@ -192,6 +195,7 @@ var loadSidebar = function(){
         }
         markerArray[cIDX] = tempmarker;
       })
+      markersGroup = L.layerGroup(markerArray);
       markerArray[0].openPopup();
 
       ok();

@@ -2,8 +2,16 @@ body {
   pointer-events: all;
 }
 
+.mobile-navigation {
+  display: none;
+  @media @mobile {
+    display: block;
+  }
+}
+
 .external-link-container {
   font-family: @bold-graphics;
+  font-weight: 700;
   padding-top: 5px;
   text-align: center;
   line-height: 1;
@@ -74,7 +82,7 @@ body {
    }
  }
  @media (max-width: 670px){
-  top:0;
+  top: 37px;
  }
 }
 
@@ -191,6 +199,7 @@ body {
   .fire-info-type {
     padding-right: 5px;
     font-family: @block-graphics;
+    font-weight: 700;
   }
 }
 
@@ -287,6 +296,7 @@ body {
 .button-container, .legend-container {
   text-align: center;
   font-family: @bold-graphics;
+  font-weight: 700;
   font-size: 15px;
   padding: 0 20px 10px 20px;;
   .button {
@@ -537,6 +547,7 @@ body {
   &:hover {
     text-decoration: underline;
     font-family: @bold-graphics;
+    font-weight: 700;
     cursor: pointer;
   }
 }
