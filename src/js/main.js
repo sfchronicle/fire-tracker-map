@@ -126,7 +126,6 @@ var loadSidebar = function(){
   console.log("loading sidebar");
 
   var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json?"+makeid();
-  console.log(calfireDataURL);
   var overlayString=``;
 
   document.getElementById("list-of-fires").innerHTML = "";
