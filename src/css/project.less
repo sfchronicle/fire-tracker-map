@@ -74,11 +74,11 @@ body {
  top: 73px;
  z-index: 0;
  @media @phone-horiz {
-   height: 50%;
+   height: calc(~"50% - 37px");
  }
  &.big-leaflet-map {
    @media @phone-horiz{
-     height: 100%;
+     height: calc(~"100% - 37px");
    }
  }
  @media (max-width: 670px){
