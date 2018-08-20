@@ -5,6 +5,7 @@
 <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 
 <%= t.include("partials/_recirc.html") %>
+<%= t.include("partials/_nav.html") %>
 
 
 <div id="map-leaflet"></div>
@@ -24,10 +25,10 @@
     <div class="external-link"><a href="https://link.sfchronicle.com/join/signup" target="_blank"><i class="fa fa-external-link"></i>Newsletter signup</a></div>
   </div>
   <div class="deck">This interactive map developed in The San Francisco Chronicle newsroom provides information on wildfires burning across California.
+
     <div class="ad"><div class="ad-text">Sponsored by</div><a href="http://www.sunfiredefense.com" target="_blank"><img src="./assets/ad.png"></a></div>
     <div class="instructions"><i class="fa fa-hand-o-right"></i>Click on the fire listings below to find them on the map, and zoom in to see details.</div>
   </div>
-
 
 
   <div class="legend-container">
@@ -57,10 +58,10 @@
   </div>
   <div class="timestamp" id="airDate"></div>
 
-  <%= t.include("partials/_list_of_fires.html") %>
+  <div id="list-of-fires" class="list-of-fires"></div>
 
   <div class="info-container">
-    <div class="entry"><span class="credit-hed">Methodology:</span>Fires are labeled when they are larger than 500 acres, cause damage to property, or when people are injured or killed as a result of the fire. Fire labels were last updated at <%=json.FireData[0].Update %>.</div>
+    <div class="entry"><span class="credit-hed">Methodology:</span>Fires are labeled when they are larger than 500 acres, cause damage to property, or when people are injured or killed as a result of the fire. Fire labels were last updated at <span id="spreadsheetUpdate"></span>.</div>
   </div>
 
   <div class="credit-container"><div class="credit-hed">Credits</div>
@@ -109,7 +110,7 @@
   var pct = <%= JSON.stringify(json.PCT_allclosures) %>;
 </script>
 
-<script src="app.js?38" async></script>
+<script src="app.js?46" async></script>
 
 </body>
 </html>

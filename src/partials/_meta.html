@@ -34,7 +34,7 @@
 		  },
 		  "dateCreated": "<%= grunt.data.json.project.date + 'T' + grunt.data.json.project.time %>",
       "datePublished": "<%= grunt.data.json.project.date + 'T' + grunt.data.json.project.time %>",
-			"dateModified": "<%= json.FireData[0].updateMeta %>",
+			<?php date_default_timezone_set('America/Los_Angeles'); echo '"dateModified": "' . date ("c", filemtime("/mnt/extras/www/sfgate/editorial/sheetsdata/firetracker.json")) . '",';?>
 		  "author": {
 		    "@type": "Person",
 		    "name": "San Francisco Chronicle Staff"

@@ -2,8 +2,16 @@ body {
   pointer-events: all;
 }
 
+.mobile-navigation {
+  display: none;
+  @media @mobile {
+    display: block;
+  }
+}
+
 .external-link-container {
   font-family: @bold-graphics;
+  font-weight: 700;
   padding-top: 5px;
   text-align: center;
   line-height: 1;
@@ -66,15 +74,15 @@ body {
  top: 73px;
  z-index: 0;
  @media @phone-horiz {
-   height: 50%;
+   height: calc(~"50% - 37px");
  }
  &.big-leaflet-map {
    @media @phone-horiz{
-     height: 100%;
+     height: calc(~"100% - 37px");
    }
  }
  @media (max-width: 670px){
-  top:0;
+  top: 37px;
  }
 }
 
@@ -175,7 +183,7 @@ body {
   }
   .fire-name {
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 700;
     img {
       vertical-align: text-bottom;
       margin-right: 5px;
@@ -191,6 +199,7 @@ body {
   .fire-info-type {
     padding-right: 5px;
     font-family: @block-graphics;
+    font-weight: 700;
   }
 }
 
@@ -287,6 +296,7 @@ body {
 .button-container, .legend-container {
   text-align: center;
   font-family: @bold-graphics;
+  font-weight: 700;
   font-size: 15px;
   padding: 0 20px 10px 20px;;
   .button {
@@ -453,30 +463,34 @@ body {
   line-height: 1.2;
   .entry {
     padding-top: 10px;
+    font-family: @block-graphics;
   }
   .credit-hed {
-    font-family: @block-graphics;
     padding-bottom: 10px;
+    font-weight: 700;
   }
   .credit-title {
     text-transform: uppercase;
-    font-family: @med-graphics;
     padding: 5px 0;
     font-size: 13px;
+    font-weight: 400;
   }
 }
 
 .info-container {
   text-align: left;
   font-style: italic;
+  font-weight: 400;
   .credit-hed {
     padding-right: 5px;
+    font-weight: 700;
   }
 }
 .credit-container {
   text-align: center;
   padding-bottom: 50px;
   .entry {
+    font-weight: 700;
     font-family: @block-graphics;
   }
 }
@@ -537,6 +551,7 @@ body {
   &:hover {
     text-decoration: underline;
     font-family: @bold-graphics;
+    font-weight: 700;
     cursor: pointer;
   }
 }
@@ -578,3 +593,12 @@ body {
   font-weight: bold;
   text-transform: uppercase;
 }
+
+.leaflet-popup-close-button {
+  @media @mobile {
+    font-size: 30px !important;
+    width: 25px !important;
+    padding: 8px 4px 0 0 !important;
+  }
+}
+
