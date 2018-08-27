@@ -523,14 +523,34 @@ var drawCalendarV2 = function(month,daynum,chartID) {
 
   return new Promise(function(ok,fail){
 
-    var no_months = +now.getMonth()+1-5;
+    // code for testing end date ----------------------------
+    // var nownow = new Date('2018-12-31T08:00:00Z');
+    // now = new Date('2018-12-31T08:00:00Z');
+    // month = +now.getMonth()+1;
+    // code for testing end date ----------------------------
 
-    var width = 200*no_months,
-          height = 165,
+    // first day of tracker
+    var minDate = new Date("2018-06-01");
+    // last day of tracker
+    // number of months (+1 is because JS is weird, -5 is because we start in June)
+    if (+now.getFullYear() > 2018 || (month === 12 && now.getDate() === 31)){
+      var maxDate = new Date(["2019-01-01"]);
+      var no_months = 7;
+      var maxMonth = 12;
+    } else {
+      var maxDate = new Date(["2018-"+zeroFill(+month+1,2)+"-01"]);
+      var no_months = +now.getMonth()+1-5;
+      var maxMonth = +now.getMonth()+1;
+    }
+
+    var width = 210*no_months,
+          height = 180,
           cellSize = 25; // cell size
 
-    var no_months_in_a_row = no_months;//Math.floor(width / (cellSize * 7 + 50));
-    var shift_up = cellSize * 2.2;
+    // we are doing a single row
+    var no_months_in_a_row = no_months;
+    // we need to shift the calendar to leave room for labels
+    var shift_down = 15;
 
     var day = d3.timeFormat("%w"), // day of the week
         day_of_month = d3.timeFormat("%e") // day of the month
@@ -545,12 +565,7 @@ var drawCalendarV2 = function(month,daynum,chartID) {
         .domain([0, 10])
         .range(d3.range(11).map(function(d) { return "q" + d + "-11"; }));
 
-    var minDate = new Date("2017-06-01");
-    var maxDate = new Date(["2017-"+zeroFill(+month+1,2)+"-01"]);
-    // var maxDate = new Date(["2017-"+month+"-"+daynum]);
-
     var svg = d3.select(chartID).selectAll("svg")
-          // .data(d3.range(minDate,maxDate)) //years included in the viz
           .data(d3.range(2018,2019)) //years included in the viz
         .enter().append("svg")
           .attr("width", width)
@@ -560,7 +575,6 @@ var drawCalendarV2 = function(month,daynum,chartID) {
     var rect = svg.selectAll("g")
         .data(function(d) {
           return d3.timeDays(minDate,maxDate);
-          // return d3.timeDays(new Date(d, 0, 1), new Date(d + 1, 0, 1));
         })
       .enter().append("g");
 
@@ -577,8 +591,7 @@ var drawCalendarV2 = function(month,daynum,chartID) {
           }
         })
         .attr("id",function(d,dIDX){
-          return "date"+(dIDX-22);
-          // return "date"+(+d.getMonth()+1)+d.getDate();
+          return "date"+(dIDX-22); // dates start on may 23
         })
         .attr("width", cellSize)
         .attr("height", cellSize)
@@ -587,9 +600,9 @@ var drawCalendarV2 = function(month,daynum,chartID) {
           return day(d) * cellSize + month_padding;
         })
         .attr("y", function(d) {
-          var week_diff = week(d) - week(new Date(year(d), mon(d), 1) );
-          var row_level = 1;//Math.ceil((mon(d)-5) / (no_months_in_a_row));
-          return (week_diff*cellSize) + row_level*cellSize*8 - cellSize/2 - shift_up;
+          var week_diff = week(d) - week(new Date(year(d), mon(d)-1, 1) );
+          var row_level = 1;
+          return ((week_diff * cellSize)+7+shift_down);
         })
         .attr("rx","5")
         .attr("ry","5")
@@ -616,9 +629,9 @@ var drawCalendarV2 = function(month,daynum,chartID) {
           return day(d) * cellSize + month_padding+12;
         })
         .attr("y", function(d) {
-          var week_diff = week(d) - week(new Date(year(d), mon(d), 1) );
-          var row_level = 1;//Math.ceil((mon(d)-5) / (no_months_in_a_row));
-          return (week_diff*cellSize) + row_level*cellSize*8 - shift_up+5;
+          var week_diff = week(d) - week(new Date(year(d), mon(d)-1, 1) )+1;
+          var row_level = 1;
+          return ((week_diff * cellSize) + shift_down);
         })
         .attr("text-anchor","middle");
 
@@ -627,7 +640,6 @@ var drawCalendarV2 = function(month,daynum,chartID) {
       }
     var month_titles = svg.selectAll(".month-title")  // Jan, Feb, Mar and the whatnot
           .data(function(d) {
-            var maxMonth = +now.getMonth()+1;// CHANGE BACK TO +1 !!!!!
             return d3.timeMonths(new Date(d, 5, 1), new Date(d, maxMonth, 1)); })
         .enter().append("text")
           .text(monthTitle)
