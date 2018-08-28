@@ -496,6 +496,7 @@ body {
 }
 
 .email-prompt {
+  text-align: center;
   a {
     font-weight: 700;
   }
@@ -553,14 +554,24 @@ body {
 
 #calendar-toggle {
   line-height: 1.2;
-  padding-bottom: 5px;
+  padding-bottom: 10px;
   font-family: @block-graphics;
+  text-decoration: underline;
+  .fa {
+    font-size: 20px;
+    padding-right: 3px;
+  }
   &:hover {
-    text-decoration: underline;
     font-family: @bold-graphics;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
   }
+}
+
+.calendar-instructions {
+  padding-top: 5px;
+  font-style: italic;
+  line-height: 1.2;
 }
 
 .calendar-hidden {

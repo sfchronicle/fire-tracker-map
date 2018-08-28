@@ -54,7 +54,7 @@ if (screen.width <= 480){
 }
 
 // code for testing end date ----------------------------
-var nownow = new Date('2018-11-30T08:00:00Z');
+// var nownow = new Date('2018-11-18T08:00:00Z');
 
 // build map ----------------------------------------------------------------------------------------------------
 
@@ -189,6 +189,7 @@ var loadSidebar = function(){
             ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
             ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
             <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+            <div class="calendar-instructions">Click on the calendar to view fire perimeters for past months, starting with the date above.</div>
         `;
         if (c.Containment == "100%"){
           var tempmarker = L.marker([c.Lat, c.Lon], {icon: containedIcon}).addTo(map).bindPopup(html_str);
@@ -316,9 +317,12 @@ var drawMap = function(fire_data) {
 var now = new Date();
 console.log(now);
 var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var monthName = months[nownow.getMonth()];
-var month = zeroFill(nownow.getMonth()+1,2);
-var daynum = zeroFill(nownow.getDate(),2);
+// var monthName = months[nownow.getMonth()];
+// var month = zeroFill(nownow.getMonth()+1,2);
+// var daynum = zeroFill(nownow.getDate(),2);
+var monthName = months[now.getMonth()];
+var month = zeroFill(now.getMonth()+1,2);
+var daynum = zeroFill(now.getDate(),2);
 
 var daynumplus1 = +daynum+1;
 
@@ -344,7 +348,7 @@ var LoadJune = function(){
   return new Promise(function(ok,fail){
     if (+month >= 6){
       for (var idx=23; idx<31; idx++) {
-        var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-06-"+zeroFill(idx,2)+".sim.json";
+        var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-06-"+zeroFill(idx,2)+".sim.json";
         urlsList.push(nasaDataURL);
         layerstoggle[calendarCount] = 0;
         // addMapLayer(nasaDataURL,idx,6,+daynum,+month,calendarCount);
@@ -362,7 +366,7 @@ var LoadJune = function(){
 //       console.log(daysInMonth(+monthIDX,2018));
 //       if (monthIDX === +month){
 //         for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
-//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
 //           urlsList.push(nasaDataURL);
 //           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
 //           calendarCount++;
@@ -370,7 +374,7 @@ var LoadJune = function(){
 //       } else {
 //         num_days_in_month = daysInMonth(monthIDX,2018);
 //         for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
 //           urlsList.push(nasaDataURL);
 //           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
 //           calendarCount++;
@@ -384,7 +388,7 @@ var AddMonthURLs = function(monthIDX){
   return new Promise(function(ok,fail){
     num_days_in_month = daysInMonth(monthIDX,2018);
     for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
       urlsList.push(nasaDataURL);
       layerstoggle[calendarCount] = 0;
       // addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
@@ -398,7 +402,7 @@ var LoadFullMonth = function(monthIDX){
   return new Promise(function(ok,fail){
     num_days_in_month = daysInMonth(monthIDX,2018);
     for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
       urlsList.push(nasaDataURL);
       addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
       calendarCount++;
@@ -409,9 +413,8 @@ var LoadFullMonth = function(monthIDX){
 
 var LoadCurrentMonth = function(monthIDX){
   console.log("loading current month");
-  console.log(daynum);
   for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
-    var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+    var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
     urlsList.push(nasaDataURL);
     addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
     calendarCount++;
@@ -423,11 +426,10 @@ function range(start, end) {
     return [start, ...range(start + 1, end)];
 }
 
-var hiddenIndices = range(6,(nownow.getMonth()-1));
-var showIndices = range(nownow.getMonth(),(nownow.getMonth()+1));
-console.log(hiddenIndices);
-console.log(showIndices);
-console.log(nownow);
+var hiddenIndices = range(6,(now.getMonth()-1));
+var showIndices = range(now.getMonth(),(now.getMonth()+1));
+// var hiddenIndices = range(6,(nownow.getMonth()-1));
+// var showIndices = range(nownow.getMonth(),(nownow.getMonth()+1));
 
 if (hiddenIndices === 6){
   LoadJune().then(()=>LoadFullMonth(now.getMonth())).then(()=>LoadCurrentMonth(now.getMonth()+1));
@@ -488,7 +490,6 @@ var calendarButtons = function(){
           layerstoggle[IDX] = 1;
         }
         e.target.classList.add("active");
-        console.log(urlsList);
       }
     }
   });
@@ -595,16 +596,17 @@ var drawCalendarV2 = function(month,daynum,chartID) {
   return new Promise(function(ok,fail){
 
     // code for testing end date ----------------------------
-    var nownow = new Date('2018-11-30T08:00:00Z');
-    now = new Date('2018-11-30T08:00:00Z');
-    month = +now.getMonth()+1;
+    // var nownow = new Date('2018-11-18T08:00:00Z');
+    // now = new Date('2018-11-18T08:00:00Z');
+    // month = +now.getMonth()+1;
+    // console.log(month);
     // code for testing end date ----------------------------
 
     // first day of tracker
     var minDate = new Date("2018-06-01");
     // last day of tracker
     // number of months (+1 is because JS is weird, -5 is because we start in June)
-    if (+now.getFullYear() > 2018 || (month === 13 && now.getDate() === 31)){
+    if (+now.getFullYear() > 2018 || month === 12){
       var maxDate = new Date(["2019-01-01"]);
       var no_months = 7;
       var maxMonth = 12;
