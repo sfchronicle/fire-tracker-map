@@ -553,6 +553,7 @@ document.getElementById("popup-noaa-explanation").addEventListener("click",funct
   document.getElementById("about-noaa").classList.remove("hide");
   document.getElementById("about-airquality").classList.add("hide");
   document.getElementById("about-nasa").classList.add("hide");
+  document.getElementById("map-overlay").classList.add("noscroll");
 });
 
 // show air quality data
@@ -562,6 +563,8 @@ document.getElementById("popup-airquality-explanation").addEventListener("click"
   document.getElementById("about-airquality").classList.remove("hide");
   document.getElementById("about-noaa").classList.add("hide");
   document.getElementById("about-nasa").classList.add("hide");
+  document.getElementById("map-overlay").classList.add("noscroll");
+
 });
 
 // show NASA data
@@ -571,12 +574,14 @@ document.getElementById("popup-nasa-explanation").addEventListener("click",funct
   document.getElementById("about-nasa").classList.remove("hide");
   document.getElementById("about-noaa").classList.add("hide");
   document.getElementById("about-airquality").classList.add("hide");
+  document.getElementById("map-overlay").classList.add("noscroll");
 });
 
 // hide the about the data box
 document.getElementById("close-data-box").addEventListener("click",function() {
   document.getElementById("aboutthedata-box").classList.remove("active");
   document.getElementById("aboutthedata-overlay").classList.remove("active");
+  document.getElementById("map-overlay").classList.remove("noscroll");
 });
 
 //----------------------------------------------------------------------------------
