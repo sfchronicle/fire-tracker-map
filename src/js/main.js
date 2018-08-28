@@ -53,6 +53,9 @@ if (screen.width <= 480){
   var ca_long = -122.193457;
 }
 
+// code for testing end date ----------------------------
+var nownow = new Date('2018-11-30T08:00:00Z');
+
 // build map ----------------------------------------------------------------------------------------------------
 
 // restrict panning outside of California
@@ -313,9 +316,9 @@ var drawMap = function(fire_data) {
 var now = new Date();
 console.log(now);
 var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var monthName = months[now.getMonth()];
-var month = zeroFill(now.getMonth()+1,2);
-var daynum = zeroFill(now.getDate(),2);
+var monthName = months[nownow.getMonth()];
+var month = zeroFill(nownow.getMonth()+1,2);
+var daynum = zeroFill(nownow.getDate(),2);
 
 var daynumplus1 = +daynum+1;
 
@@ -341,9 +344,10 @@ var LoadJune = function(){
   return new Promise(function(ok,fail){
     if (+month >= 6){
       for (var idx=23; idx<31; idx++) {
-        var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-06-"+zeroFill(idx,2)+".sim.json";
+        var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-06-"+zeroFill(idx,2)+".sim.json";
         urlsList.push(nasaDataURL);
-        addMapLayer(nasaDataURL,idx,6,+daynum,+month,calendarCount);
+        layerstoggle[calendarCount] = 0;
+        // addMapLayer(nasaDataURL,idx,6,+daynum,+month,calendarCount);
         calendarCount++;
       }
       ok();
@@ -351,32 +355,93 @@ var LoadJune = function(){
   });
 }
 // fill in data for months after June
-var LoadJuly = function(){
-  console.log("loading july");
-  if (+month > 6){
-    for (var monthIDX=7; monthIDX<(+month+1); monthIDX++){
-      console.log(daysInMonth(+monthIDX,2018));
-      if (monthIDX === +month){
-        for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
-          var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
-          urlsList.push(nasaDataURL);
-          addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
-          calendarCount++;
-        }
-      } else {
-        num_days_in_month = daysInMonth(monthIDX,2018);
-        for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-          var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
-          urlsList.push(nasaDataURL);
-          addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
-          calendarCount++;
-        }
-      }
+// var LoadOtherMonths = function(){
+//   console.log("loading july");
+//   if (+month > 6){
+//     for (var monthIDX=7; monthIDX<(+month+1); monthIDX++){
+//       console.log(daysInMonth(+monthIDX,2018));
+//       if (monthIDX === +month){
+//         for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
+//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+//           urlsList.push(nasaDataURL);
+//           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
+//           calendarCount++;
+//         }
+//       } else {
+//         num_days_in_month = daysInMonth(monthIDX,2018);
+//         for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
+//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+//           urlsList.push(nasaDataURL);
+//           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
+//           calendarCount++;
+//         }
+//       }
+//     }
+//   }
+// }
+
+var AddMonthURLs = function(monthIDX){
+  return new Promise(function(ok,fail){
+    num_days_in_month = daysInMonth(monthIDX,2018);
+    for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
+      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+      urlsList.push(nasaDataURL);
+      layerstoggle[calendarCount] = 0;
+      // addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
+      calendarCount++;
     }
+    ok();
+  });
+}
+
+var LoadFullMonth = function(monthIDX){
+  return new Promise(function(ok,fail){
+    num_days_in_month = daysInMonth(monthIDX,2018);
+    for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
+      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+      urlsList.push(nasaDataURL);
+      addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
+      calendarCount++;
+    }
+    ok();
+  });
+}
+
+var LoadCurrentMonth = function(monthIDX){
+  console.log("loading current month");
+  console.log(daynum);
+  for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
+    var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+    urlsList.push(nasaDataURL);
+    addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
+    calendarCount++;
   }
 }
 
-LoadJune().then(()=>LoadJuly());
+function range(start, end) {
+    if(start === end) return [start];
+    return [start, ...range(start + 1, end)];
+}
+
+var hiddenIndices = range(6,(nownow.getMonth()-1));
+var showIndices = range(nownow.getMonth(),(nownow.getMonth()+1));
+console.log(hiddenIndices);
+console.log(showIndices);
+console.log(nownow);
+
+if (hiddenIndices === 6){
+  LoadJune().then(()=>LoadFullMonth(now.getMonth())).then(()=>LoadCurrentMonth(now.getMonth()+1));
+} else {
+  var promises = [];
+  hiddenIndices.forEach(function(ind){
+    if (ind !== 6){
+      promises.push(AddMonthURLs(ind));
+    } else {
+      promises.push(LoadJune());
+    }
+  });
+  Promise.all(promises).then(()=>LoadFullMonth(now.getMonth())).then(()=>LoadCurrentMonth(now.getMonth()+1));
+}
 
 // adding PCT closures
 var pathstyle = {"color":"#333","weight":5, "dashArray":"20,15"};
@@ -423,6 +488,7 @@ var calendarButtons = function(){
           layerstoggle[IDX] = 1;
         }
         e.target.classList.add("active");
+        console.log(urlsList);
       }
     }
   });
@@ -524,16 +590,16 @@ var drawCalendarV2 = function(month,daynum,chartID) {
   return new Promise(function(ok,fail){
 
     // code for testing end date ----------------------------
-    // var nownow = new Date('2018-12-31T08:00:00Z');
-    // now = new Date('2018-12-31T08:00:00Z');
-    // month = +now.getMonth()+1;
+    var nownow = new Date('2018-11-30T08:00:00Z');
+    now = new Date('2018-11-30T08:00:00Z');
+    month = +now.getMonth()+1;
     // code for testing end date ----------------------------
 
     // first day of tracker
     var minDate = new Date("2018-06-01");
     // last day of tracker
     // number of months (+1 is because JS is weird, -5 is because we start in June)
-    if (+now.getFullYear() > 2018 || (month === 12 && now.getDate() === 31)){
+    if (+now.getFullYear() > 2018 || (month === 13 && now.getDate() === 31)){
       var maxDate = new Date(["2019-01-01"]);
       var no_months = 7;
       var maxMonth = 12;
@@ -586,8 +652,10 @@ var drawCalendarV2 = function(month,daynum,chartID) {
             return "daybox nowbox clickable active clickablerect";
           } else if (d.getMonth() === now.getMonth() && d.getDate() > now.getDate()){
             return "daybox nodatabox active";
-          } else {
+          } else if (d.getMonth() === now.getMonth() || d.getMonth() === (now.getMonth()-1)){
             return "daybox clickable active clickablerect";
+          } else {
+            return "daybox clickable clickablerect";
           }
         })
         .attr("id",function(d,dIDX){
@@ -644,11 +712,12 @@ var drawCalendarV2 = function(month,daynum,chartID) {
         .enter().append("text")
           .text(monthTitle)
           .attr("x", function(d, i) {
-            var month_padding = 1.2 * cellSize*7* (mon(d)-6);
+            var month_padding = 1.2 * cellSize*7* (mon(d)-6) + 40;
             return month_padding;
           })
           .attr("y", 10)
           .attr("class", "month-title")
+          .attr("text-anchor","middle")
           .attr("d", monthTitle);
 
     ok();
