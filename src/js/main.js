@@ -348,7 +348,7 @@ var LoadJune = function(){
   return new Promise(function(ok,fail){
     if (+month >= 6){
       for (var idx=23; idx<31; idx++) {
-        var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-06-"+zeroFill(idx,2)+".sim.json";
+        var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-06-"+zeroFill(idx,2)+".sim.json";
         urlsList.push(nasaDataURL);
         layerstoggle[calendarCount] = 0;
         // addMapLayer(nasaDataURL,idx,6,+daynum,+month,calendarCount);
@@ -366,7 +366,7 @@ var LoadJune = function(){
 //       console.log(daysInMonth(+monthIDX,2018));
 //       if (monthIDX === +month){
 //         for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
-//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
 //           urlsList.push(nasaDataURL);
 //           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
 //           calendarCount++;
@@ -374,7 +374,7 @@ var LoadJune = function(){
 //       } else {
 //         num_days_in_month = daysInMonth(monthIDX,2018);
 //         for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
 //           urlsList.push(nasaDataURL);
 //           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
 //           calendarCount++;
@@ -388,7 +388,7 @@ var AddMonthURLs = function(monthIDX){
   return new Promise(function(ok,fail){
     num_days_in_month = daysInMonth(monthIDX,2018);
     for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
       urlsList.push(nasaDataURL);
       layerstoggle[calendarCount] = 0;
       // addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
@@ -402,7 +402,7 @@ var LoadFullMonth = function(monthIDX){
   return new Promise(function(ok,fail){
     num_days_in_month = daysInMonth(monthIDX,2018);
     for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
       urlsList.push(nasaDataURL);
       addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
       calendarCount++;
@@ -414,7 +414,7 @@ var LoadFullMonth = function(monthIDX){
 var LoadCurrentMonth = function(monthIDX){
   console.log("loading current month");
   for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
-    var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime_fake/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+    var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
     urlsList.push(nasaDataURL);
     addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
     calendarCount++;
