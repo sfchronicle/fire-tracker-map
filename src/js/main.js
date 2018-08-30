@@ -497,51 +497,29 @@ var calendarButtons = function(){
 
 // air quality layer ----------------------------------------------------------------------
 var pollution_toggle = 0;
-var pollutionLayer, contourLayer;
+var pollutionLayer;
 
 // adding and removing the air quality layer on button click
 document.getElementById("airquality").addEventListener("click",function() {
+
   // remove air quality layer
   if (pollution_toggle == 1) {
+    // remove layer and toggle air quality indicator and legend
     map.removeLayer(pollutionLayer);
-    map.removeLayer(contourLayer);
     pollution_toggle = 0;
     this.classList.remove("active");
     document.getElementById("airquallegend").classList.remove("active");
+
   // add air quality layer
   } else {
+    // add air quality data to map and toggle air quality indicator and legend
+    var urlpathPollution = "https://hwp-viz.gsd.esrl.noaa.gov/wmts/image/hrrr_smoke?var=sfc_smoke&x={x}&y={y}&z={z}&time=&modelrun=&level=0";
+    pollutionLayer = L.tileLayer(urlpathPollution,{transparent: true,opacity: 0.6})
+    pollutionLayer.addTo(map);
+    pollution_toggle = 1;
     this.classList.add("active");
-    // zoom out so that reader can actually see the data they requested
-    if (map.getZoom() > 10) {
-      map.setZoom(10);
-    }
-    // obtain most recent dataset based on file on server
-    d3.text('https://extras.sfgate.com/editorial/wildfires/airquality_date.txt?').then(function(text) {
-      var urlpathPollution = "http://berkeleyearth.lbl.gov/air-quality/maps/hour/"+text.substring(0,6)+"/"+text+"/tiles/health/{z}/{x}/{y}.png";
-      var urlpathContours = "http://berkeleyearth.lbl.gov/air-quality/maps/hour/"+text.substring(0,6)+"/"+text+"/tiles/contour/{z}/{x}/{y}.png";
+    document.getElementById("airquallegend").classList.add("active");
 
-      // add layer with colors
-      pollutionLayer = L.tileLayer(urlpathPollution,{transparent: true,opacity: 0.7})
-      pollutionLayer.addTo(map);
-      // add layer with contour lines
-      contourLayer = L.tileLayer(urlpathContours,{transparent: true,opacity: 0.7})
-      contourLayer.addTo(map);
-      // now we are showing the air quality layer
-      pollution_toggle = 1;
-
-      document.getElementById("airquallegend").classList.add("active");
-
-      var airSTR = text.substring(4,6)+"/"+text.substring(6,8)+"/"+text.substring(0,4)+" "+text.substring(8,10)+":00 UTC";
-      var date = new Date(airSTR);
-      var PDTdate = date.toString();
-      var eAIR = formatDate(date,PDTdate.split(" ")[1]);
-
-      // fill in when data was last updated
-      if (document.getElementById("airDate")) {
-        document.getElementById("airDate").innerHTML = "Air quality data updated on " + eAIR;
-      }
-
-    });
   }
 });
 
