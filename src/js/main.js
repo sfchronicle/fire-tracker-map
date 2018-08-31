@@ -53,9 +53,6 @@ if (screen.width <= 480){
   var ca_long = -122.193457;
 }
 
-// code for testing end date ----------------------------
-// var nownow = new Date('2018-11-18T08:00:00Z');
-
 // build map ----------------------------------------------------------------------------------------------------
 
 // restrict panning outside of California
@@ -348,39 +345,14 @@ var LoadJune = function(){
         var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-06-"+zeroFill(idx,2)+".sim.json";
         urlsList.push(nasaDataURL);
         layerstoggle[calendarCount] = 0;
-        // addMapLayer(nasaDataURL,idx,6,+daynum,+month,calendarCount);
         calendarCount++;
       }
       ok();
     }
   });
 }
-// fill in data for months after June
-// var LoadOtherMonths = function(){
-//   console.log("loading july");
-//   if (+month > 6){
-//     for (var monthIDX=7; monthIDX<(+month+1); monthIDX++){
-//       console.log(daysInMonth(+monthIDX,2018));
-//       if (monthIDX === +month){
-//         for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
-//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
-//           urlsList.push(nasaDataURL);
-//           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
-//           calendarCount++;
-//         }
-//       } else {
-//         num_days_in_month = daysInMonth(monthIDX,2018);
-//         for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-//           var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
-//           urlsList.push(nasaDataURL);
-//           addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
-//           calendarCount++;
-//         }
-//       }
-//     }
-//   }
-// }
 
+// add url information to data structure for months that are not current month or one month previous to current month
 var AddMonthURLs = function(monthIDX){
   return new Promise(function(ok,fail){
     num_days_in_month = daysInMonth(monthIDX,2018);
@@ -388,13 +360,13 @@ var AddMonthURLs = function(monthIDX){
       var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
       urlsList.push(nasaDataURL);
       layerstoggle[calendarCount] = 0;
-      // addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
       calendarCount++;
     }
     ok();
   });
 }
 
+// add map layer to map for months that is month previous to current month (increment through all days in month)
 var LoadFullMonth = function(monthIDX){
   return new Promise(function(ok,fail){
     num_days_in_month = daysInMonth(monthIDX,2018);
@@ -408,6 +380,7 @@ var LoadFullMonth = function(monthIDX){
   });
 }
 
+// add map layer to map for current month (increment through current day of the month)
 var LoadCurrentMonth = function(monthIDX){
   console.log("loading current month");
   for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
@@ -418,15 +391,16 @@ var LoadCurrentMonth = function(monthIDX){
   }
 }
 
+// specify start and stop for array
 function range(start, end) {
     if(start === end) return [start];
     return [start, ...range(start + 1, end)];
 }
 
+// these are the months that should not be displayed automatically
 var hiddenIndices = range(6,(now.getMonth()-1));
+// these are the months that should be displayed automatically
 var showIndices = range(now.getMonth(),(now.getMonth()+1));
-// var hiddenIndices = range(6,(nownow.getMonth()-1));
-// var showIndices = range(nownow.getMonth(),(nownow.getMonth()+1));
 
 if (hiddenIndices === 6){
   LoadJune().then(()=>LoadFullMonth(now.getMonth())).then(()=>LoadCurrentMonth(now.getMonth()+1));
@@ -448,6 +422,7 @@ var pctPath = L.geoJSON(pct,{style: pathstyle}).addTo(map);
 pctPath.bindPopup("Pacific Crest Trail Closure");
 L.marker([38.495835,-119.766012], {icon: closureIcon}).addTo(map).bindPopup("Pacific Crest Trail Closure");
 
+// add layer to map
 function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount){
   if (month == currentmonth && day == currentday){
     d3.json(nasaDataURL).then(function(nasa){
@@ -463,7 +438,6 @@ function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount
     });
   }
 }
-
 
 // event listener to toggle layers via calendar buttons, aka event delegation is awesome
 var calendarButtons = function(){
@@ -569,13 +543,6 @@ var drawCalendarV2 = function(month,daynum,chartID) {
   console.log("drawing calendar");
 
   return new Promise(function(ok,fail){
-
-    // code for testing end date ----------------------------
-    // var nownow = new Date('2018-11-18T08:00:00Z');
-    // now = new Date('2018-11-18T08:00:00Z');
-    // month = +now.getMonth()+1;
-    // console.log(month);
-    // code for testing end date ----------------------------
 
     // first day of tracker
     var minDate = new Date("2018-06-01");
