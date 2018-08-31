@@ -317,9 +317,6 @@ var drawMap = function(fire_data) {
 var now = new Date();
 console.log(now);
 var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-// var monthName = months[nownow.getMonth()];
-// var month = zeroFill(nownow.getMonth()+1,2);
-// var daynum = zeroFill(nownow.getDate(),2);
 var monthName = months[now.getMonth()];
 var month = zeroFill(now.getMonth()+1,2);
 var daynum = zeroFill(now.getDate(),2);
