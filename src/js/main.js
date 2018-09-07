@@ -69,12 +69,19 @@ var map = L.map("map-leaflet", {
   attributionControl: false
 });
 
-if (+blockdata[0].Zoom > 10){
-  ca_offset_new = ca_offset/(+blockdata[0].Zoom-9);
-} else {
-  ca_offset_new = ca_offset;
-}
-map.setView([blockdata[0].Lat,(blockdata[0].Lon-ca_offset_new)],blockdata[0].Zoom);
+
+// zoom map to first fire on sheets data
+var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json?";
+d3.json(calfireDataURL).then(function(blockdata){
+  if (+blockdata[0].Zoom > 10){
+    ca_offset_new = ca_offset/(+blockdata[0].Zoom-9);
+  } else {
+    ca_offset_new = ca_offset;
+  }
+  map.setView([blockdata[0].Lat,(blockdata[0].Lon-ca_offset_new)],blockdata[0].Zoom);
+
+});
+
 
 // initializing the svg layer
 L.svg().addTo(map);
@@ -125,7 +132,6 @@ var markersGroup;
 var loadSidebar = function(){
   console.log("loading sidebar");
 
-  var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json?"+makeid();
   var overlayString=``;
 
   document.getElementById("list-of-fires").innerHTML = "";
