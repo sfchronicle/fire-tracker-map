@@ -11,7 +11,7 @@
     width:100%;
 
     .info{
-      font-family: Pierpont-bold;
+      font-family: @block-graphics;
       line-height: 1.2;
       font-size: 16px;
       color: #000;
@@ -47,6 +47,8 @@
 
     .story-info{
       align-self: flex-end;
+      height: 43px;
+      overflow: hidden;
     }
 
     .story{
@@ -106,9 +108,11 @@
       }
 
       h3{
-        font-size:11px;
+        font-size:12px;
         margin-left:10px;
         line-height:1.2;
+        font-family: @sans-serif-bold;
+        max-width: 160px;
       }
     }
 

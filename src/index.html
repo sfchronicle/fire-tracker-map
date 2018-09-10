@@ -21,8 +21,9 @@
   <div class="title">2018 California Fire Tracker</div>
   <%= t.include("partials/_fullwidthmap-social.html") %>
   <div class="external-link-container">
-    <div class="external-link"><a href="https://www.sfchronicle.com/california-wildfires-2018/" target="_blank"><i class="fa fa-external-link"></i>Full fire coverage</a></div>
-    <div class="external-link"><a href="https://link.sfchronicle.com/join/signup" target="_blank"><i class="fa fa-external-link"></i>Newsletter signup</a></div>
+    <div class="external-link label">Links:</div>
+    <div class="external-link"><a href="https://www.sfchronicle.com/california-wildfires-2018/" target="_blank">Full fire coverage</a></div>
+    <div class="external-link"><a href="https://link.sfchronicle.com/join/signup" target="_blank">Newsletter signup</a></div>
   </div>
   <div class="deck">This interactive map developed in The San Francisco Chronicle newsroom provides information on wildfires burning across California.
 
@@ -56,12 +57,15 @@
     <div class="button" id="airquality">See up-to-date air quality</div>
     <div class="popup" id="popup-airquality-explanation"><i class="fa fa-hand-o-right"></i>What is air quality data?</div>
   </div>
-  <div class="timestamp" id="airDate"></div>
 
   <div id="list-of-fires" class="list-of-fires"></div>
 
   <div class="info-container">
     <div class="entry"><span class="credit-hed">Methodology:</span>Fires are labeled when they are larger than 500 acres, cause damage to property, or when people are injured or killed as a result of the fire. Fire labels were last updated at <span id="spreadsheetUpdate"></span>.</div>
+  </div>
+
+  <div class="email-prompt info-container">
+    Questions? Feedback? <a href="mailto:data@sfchronicle.com">Email the Chronicle's data team.</a>
   </div>
 
   <div class="credit-container"><div class="credit-hed">Credits</div>
@@ -83,16 +87,21 @@
 
 <div class="air-legend-container" id="airquallegend">
   <div class="swath-text left">Good</div>
-  <div class="swath blue-swath0"></div>
-  <div class="swath blue-swath1"></div>
-  <div class="swath blue-swath2"></div>
-  <div class="swath blue-swath3"></div>
-  <div class="swath blue-swath4"></div>
-  <div class="swath red-swath4"></div>
-  <div class="swath red-swath3"></div>
-  <div class="swath red-swath2"></div>
-  <div class="swath red-swath1"></div>
-  <div class="swath red-swath0"></div>
+  <div class="swath swath14"></div>
+  <div class="swath swath13"></div>
+  <div class="swath swath12"></div>
+  <div class="swath swath11"></div>
+  <div class="swath swath10"></div>
+  <div class="swath swath9"></div>
+  <div class="swath swath8"></div>
+  <div class="swath swath7"></div>
+  <div class="swath swath6"></div>
+  <div class="swath swath5"></div>
+  <div class="swath swath4"></div>
+  <div class="swath swath3"></div>
+  <div class="swath swath2"></div>
+  <div class="swath swath1"></div>
+  <div class="swath swath0"></div>
   <div class="swath-text right">Hazardous</div>
 </div>
 
@@ -105,12 +114,9 @@
   </div>
 </div>
 
-<script>
-  var blockdata = <%= JSON.stringify(json.FireData) %>;
-  var pct = <%= JSON.stringify(json.PCT_allclosures) %>;
-</script>
+<script>var pct = <%= JSON.stringify(json.PCT_allclosures) %>;</script>
 
-<script src="app.js?46" async></script>
+<script src="app.js" async></script>
 
 </body>
 </html>

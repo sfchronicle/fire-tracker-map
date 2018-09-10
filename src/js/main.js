@@ -69,12 +69,19 @@ var map = L.map("map-leaflet", {
   attributionControl: false
 });
 
-if (+blockdata[0].Zoom > 10){
-  ca_offset_new = ca_offset/(+blockdata[0].Zoom-9);
-} else {
-  ca_offset_new = ca_offset;
-}
-map.setView([blockdata[0].Lat,(blockdata[0].Lon-ca_offset_new)],blockdata[0].Zoom);
+
+// zoom map to first fire on sheets data
+var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json?";
+d3.json(calfireDataURL).then(function(blockdata){
+  if (+blockdata[0].Zoom > 10){
+    ca_offset_new = ca_offset/(+blockdata[0].Zoom-9);
+  } else {
+    ca_offset_new = ca_offset;
+  }
+  map.setView([blockdata[0].Lat,(blockdata[0].Lon-ca_offset_new)],blockdata[0].Zoom);
+
+});
+
 
 // initializing the svg layer
 L.svg().addTo(map);
@@ -125,7 +132,6 @@ var markersGroup;
 var loadSidebar = function(){
   console.log("loading sidebar");
 
-  var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json?"+makeid();
   var overlayString=``;
 
   document.getElementById("list-of-fires").innerHTML = "";
@@ -186,6 +192,7 @@ var loadSidebar = function(){
             ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
             ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
             <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
+            <div class="calendar-instructions">Click on the calendar to view fire perimeters for past months, starting with the date above.</div>
         `;
         if (c.Containment == "100%"){
           var tempmarker = L.marker([c.Lat, c.Lon], {icon: containedIcon}).addTo(map).bindPopup(html_str);
@@ -343,40 +350,77 @@ var LoadJune = function(){
       for (var idx=23; idx<31; idx++) {
         var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-06-"+zeroFill(idx,2)+".sim.json";
         urlsList.push(nasaDataURL);
-        addMapLayer(nasaDataURL,idx,6,+daynum,+month,calendarCount);
+        layerstoggle[calendarCount] = 0;
         calendarCount++;
       }
       ok();
     }
   });
 }
-// fill in data for months after June
-var LoadJuly = function(){
-  console.log("loading july");
-  if (+month > 6){
-    for (var monthIDX=7; monthIDX<(+month+1); monthIDX++){
-      console.log(daysInMonth(+monthIDX,2018));
-      if (monthIDX === +month){
-        for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
-          var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
-          urlsList.push(nasaDataURL);
-          addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
-          calendarCount++;
-        }
-      } else {
-        num_days_in_month = daysInMonth(monthIDX,2018);
-        for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-          var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
-          urlsList.push(nasaDataURL);
-          addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
-          calendarCount++;
-        }
-      }
+
+// add url information to data structure for months that are not current month or one month previous to current month
+var AddMonthURLs = function(monthIDX){
+  return new Promise(function(ok,fail){
+    num_days_in_month = daysInMonth(monthIDX,2018);
+    for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
+      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+      urlsList.push(nasaDataURL);
+      layerstoggle[calendarCount] = 0;
+      calendarCount++;
     }
+    ok();
+  });
+}
+
+// add map layer to map for months that is month previous to current month (increment through all days in month)
+var LoadFullMonth = function(monthIDX){
+  return new Promise(function(ok,fail){
+    num_days_in_month = daysInMonth(monthIDX,2018);
+    for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
+      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+      urlsList.push(nasaDataURL);
+      addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
+      calendarCount++;
+    }
+    ok();
+  });
+}
+
+// add map layer to map for current month (increment through current day of the month)
+var LoadCurrentMonth = function(monthIDX){
+  console.log("loading current month");
+  for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
+    var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
+    urlsList.push(nasaDataURL);
+    addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
+    calendarCount++;
   }
 }
 
-LoadJune().then(()=>LoadJuly());
+// specify start and stop for array
+function range(start, end) {
+    if(start === end) return [start];
+    return [start, ...range(start + 1, end)];
+}
+
+// these are the months that should not be displayed automatically
+var hiddenIndices = range(6,(now.getMonth()-1));
+// these are the months that should be displayed automatically
+var showIndices = range(now.getMonth(),(now.getMonth()+1));
+
+if (hiddenIndices === 6){
+  LoadJune().then(()=>LoadFullMonth(now.getMonth())).then(()=>LoadCurrentMonth(now.getMonth()+1));
+} else {
+  var promises = [];
+  hiddenIndices.forEach(function(ind){
+    if (ind !== 6){
+      promises.push(AddMonthURLs(ind));
+    } else {
+      promises.push(LoadJune());
+    }
+  });
+  Promise.all(promises).then(()=>LoadFullMonth(now.getMonth())).then(()=>LoadCurrentMonth(now.getMonth()+1));
+}
 
 // adding PCT closures
 var pathstyle = {"color":"#333","weight":5, "dashArray":"20,15"};
@@ -384,6 +428,7 @@ var pctPath = L.geoJSON(pct,{style: pathstyle}).addTo(map);
 pctPath.bindPopup("Pacific Crest Trail Closure");
 L.marker([38.495835,-119.766012], {icon: closureIcon}).addTo(map).bindPopup("Pacific Crest Trail Closure");
 
+// add layer to map
 function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount){
   if (month == currentmonth && day == currentday){
     d3.json(nasaDataURL).then(function(nasa){
@@ -399,7 +444,6 @@ function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount
     });
   }
 }
-
 
 // event listener to toggle layers via calendar buttons, aka event delegation is awesome
 var calendarButtons = function(){
@@ -430,51 +474,29 @@ var calendarButtons = function(){
 
 // air quality layer ----------------------------------------------------------------------
 var pollution_toggle = 0;
-var pollutionLayer, contourLayer;
+var pollutionLayer;
 
 // adding and removing the air quality layer on button click
 document.getElementById("airquality").addEventListener("click",function() {
+
   // remove air quality layer
   if (pollution_toggle == 1) {
+    // remove layer and toggle air quality indicator and legend
     map.removeLayer(pollutionLayer);
-    map.removeLayer(contourLayer);
     pollution_toggle = 0;
     this.classList.remove("active");
     document.getElementById("airquallegend").classList.remove("active");
+
   // add air quality layer
   } else {
+    // add air quality data to map and toggle air quality indicator and legend
+    var urlpathPollution = "https://hwp-viz.gsd.esrl.noaa.gov/wmts/image/hrrr_smoke?var=sfc_smoke&x={x}&y={y}&z={z}&time=&modelrun=&level=0";
+    pollutionLayer = L.tileLayer(urlpathPollution,{transparent: true,opacity: 0.6})
+    pollutionLayer.addTo(map);
+    pollution_toggle = 1;
     this.classList.add("active");
-    // zoom out so that reader can actually see the data they requested
-    if (map.getZoom() > 10) {
-      map.setZoom(10);
-    }
-    // obtain most recent dataset based on file on server
-    d3.text('https://extras.sfgate.com/editorial/wildfires/airquality_date.txt?').then(function(text) {
-      var urlpathPollution = "http://berkeleyearth.lbl.gov/air-quality/maps/hour/"+text.substring(0,6)+"/"+text+"/tiles/health/{z}/{x}/{y}.png";
-      var urlpathContours = "http://berkeleyearth.lbl.gov/air-quality/maps/hour/"+text.substring(0,6)+"/"+text+"/tiles/contour/{z}/{x}/{y}.png";
+    document.getElementById("airquallegend").classList.add("active");
 
-      // add layer with colors
-      pollutionLayer = L.tileLayer(urlpathPollution,{transparent: true,opacity: 0.7})
-      pollutionLayer.addTo(map);
-      // add layer with contour lines
-      contourLayer = L.tileLayer(urlpathContours,{transparent: true,opacity: 0.7})
-      contourLayer.addTo(map);
-      // now we are showing the air quality layer
-      pollution_toggle = 1;
-
-      document.getElementById("airquallegend").classList.add("active");
-
-      var airSTR = text.substring(4,6)+"/"+text.substring(6,8)+"/"+text.substring(0,4)+" "+text.substring(8,10)+":00 UTC";
-      var date = new Date(airSTR);
-      var PDTdate = date.toString();
-      var eAIR = formatDate(date,PDTdate.split(" ")[1]);
-
-      // fill in when data was last updated
-      if (document.getElementById("airDate")) {
-        document.getElementById("airDate").innerHTML = "Air quality data updated on " + eAIR;
-      }
-
-    });
   }
 });
 
@@ -487,6 +509,7 @@ document.getElementById("popup-noaa-explanation").addEventListener("click",funct
   document.getElementById("about-noaa").classList.remove("hide");
   document.getElementById("about-airquality").classList.add("hide");
   document.getElementById("about-nasa").classList.add("hide");
+  document.getElementById("map-overlay").classList.add("noscroll");
 });
 
 // show air quality data
@@ -496,6 +519,8 @@ document.getElementById("popup-airquality-explanation").addEventListener("click"
   document.getElementById("about-airquality").classList.remove("hide");
   document.getElementById("about-noaa").classList.add("hide");
   document.getElementById("about-nasa").classList.add("hide");
+  document.getElementById("map-overlay").classList.add("noscroll");
+
 });
 
 // show NASA data
@@ -505,12 +530,14 @@ document.getElementById("popup-nasa-explanation").addEventListener("click",funct
   document.getElementById("about-nasa").classList.remove("hide");
   document.getElementById("about-noaa").classList.add("hide");
   document.getElementById("about-airquality").classList.add("hide");
+  document.getElementById("map-overlay").classList.add("noscroll");
 });
 
 // hide the about the data box
 document.getElementById("close-data-box").addEventListener("click",function() {
   document.getElementById("aboutthedata-box").classList.remove("active");
   document.getElementById("aboutthedata-overlay").classList.remove("active");
+  document.getElementById("map-overlay").classList.remove("noscroll");
 });
 
 //----------------------------------------------------------------------------------
@@ -523,14 +550,28 @@ var drawCalendarV2 = function(month,daynum,chartID) {
 
   return new Promise(function(ok,fail){
 
-    var no_months = +now.getMonth()+1-5;
+    // first day of tracker
+    var minDate = new Date("2018-06-01");
+    // last day of tracker
+    // number of months (+1 is because JS is weird, -5 is because we start in June)
+    if (+now.getFullYear() > 2018 || month === 12){
+      var maxDate = new Date(["2019-01-01"]);
+      var no_months = 7;
+      var maxMonth = 12;
+    } else {
+      var maxDate = new Date(["2018-"+zeroFill(+month+1,2)+"-01"]);
+      var no_months = +now.getMonth()+1-5;
+      var maxMonth = +now.getMonth()+1;
+    }
 
-    var width = 200*no_months,
-          height = 165,
+    var width = 210*no_months,
+          height = 180,
           cellSize = 25; // cell size
 
-    var no_months_in_a_row = no_months;//Math.floor(width / (cellSize * 7 + 50));
-    var shift_up = cellSize * 2.2;
+    // we are doing a single row
+    var no_months_in_a_row = no_months;
+    // we need to shift the calendar to leave room for labels
+    var shift_down = 15;
 
     var day = d3.timeFormat("%w"), // day of the week
         day_of_month = d3.timeFormat("%e") // day of the month
@@ -545,12 +586,7 @@ var drawCalendarV2 = function(month,daynum,chartID) {
         .domain([0, 10])
         .range(d3.range(11).map(function(d) { return "q" + d + "-11"; }));
 
-    var minDate = new Date("2017-06-01");
-    var maxDate = new Date(["2017-"+zeroFill(+month+1,2)+"-01"]);
-    // var maxDate = new Date(["2017-"+month+"-"+daynum]);
-
     var svg = d3.select(chartID).selectAll("svg")
-          // .data(d3.range(minDate,maxDate)) //years included in the viz
           .data(d3.range(2018,2019)) //years included in the viz
         .enter().append("svg")
           .attr("width", width)
@@ -560,7 +596,6 @@ var drawCalendarV2 = function(month,daynum,chartID) {
     var rect = svg.selectAll("g")
         .data(function(d) {
           return d3.timeDays(minDate,maxDate);
-          // return d3.timeDays(new Date(d, 0, 1), new Date(d + 1, 0, 1));
         })
       .enter().append("g");
 
@@ -572,13 +607,14 @@ var drawCalendarV2 = function(month,daynum,chartID) {
             return "daybox nowbox clickable active clickablerect";
           } else if (d.getMonth() === now.getMonth() && d.getDate() > now.getDate()){
             return "daybox nodatabox active";
-          } else {
+          } else if (d.getMonth() === now.getMonth() || d.getMonth() === (now.getMonth()-1)){
             return "daybox clickable active clickablerect";
+          } else {
+            return "daybox clickable clickablerect";
           }
         })
         .attr("id",function(d,dIDX){
-          return "date"+(dIDX-22);
-          // return "date"+(+d.getMonth()+1)+d.getDate();
+          return "date"+(dIDX-22); // dates start on may 23
         })
         .attr("width", cellSize)
         .attr("height", cellSize)
@@ -587,9 +623,9 @@ var drawCalendarV2 = function(month,daynum,chartID) {
           return day(d) * cellSize + month_padding;
         })
         .attr("y", function(d) {
-          var week_diff = week(d) - week(new Date(year(d), mon(d), 1) );
-          var row_level = 1;//Math.ceil((mon(d)-5) / (no_months_in_a_row));
-          return (week_diff*cellSize) + row_level*cellSize*8 - cellSize/2 - shift_up;
+          var week_diff = week(d) - week(new Date(year(d), mon(d)-1, 1) );
+          var row_level = 1;
+          return ((week_diff * cellSize)+7+shift_down);
         })
         .attr("rx","5")
         .attr("ry","5")
@@ -616,9 +652,9 @@ var drawCalendarV2 = function(month,daynum,chartID) {
           return day(d) * cellSize + month_padding+12;
         })
         .attr("y", function(d) {
-          var week_diff = week(d) - week(new Date(year(d), mon(d), 1) );
-          var row_level = 1;//Math.ceil((mon(d)-5) / (no_months_in_a_row));
-          return (week_diff*cellSize) + row_level*cellSize*8 - shift_up+5;
+          var week_diff = week(d) - week(new Date(year(d), mon(d)-1, 1) )+1;
+          var row_level = 1;
+          return ((week_diff * cellSize) + shift_down);
         })
         .attr("text-anchor","middle");
 
@@ -627,16 +663,16 @@ var drawCalendarV2 = function(month,daynum,chartID) {
       }
     var month_titles = svg.selectAll(".month-title")  // Jan, Feb, Mar and the whatnot
           .data(function(d) {
-            var maxMonth = +now.getMonth()+1;// CHANGE BACK TO +1 !!!!!
             return d3.timeMonths(new Date(d, 5, 1), new Date(d, maxMonth, 1)); })
         .enter().append("text")
           .text(monthTitle)
           .attr("x", function(d, i) {
-            var month_padding = 1.2 * cellSize*7* (mon(d)-6);
+            var month_padding = 1.2 * cellSize*7* (mon(d)-6) + 40;
             return month_padding;
           })
           .attr("y", 10)
           .attr("class", "month-title")
+          .attr("text-anchor","middle")
           .attr("d", monthTitle);
 
     ok();
