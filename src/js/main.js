@@ -422,12 +422,6 @@ if (hiddenIndices === 6){
   Promise.all(promises).then(()=>LoadFullMonth(now.getMonth())).then(()=>LoadCurrentMonth(now.getMonth()+1));
 }
 
-// adding PCT closures
-var pathstyle = {"color":"#333","weight":5, "dashArray":"20,15"};
-var pctPath = L.geoJSON(pct,{style: pathstyle}).addTo(map);
-pctPath.bindPopup("Pacific Crest Trail Closure");
-L.marker([38.495835,-119.766012], {icon: closureIcon}).addTo(map).bindPopup("Pacific Crest Trail Closure");
-
 // add layer to map
 function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount){
   if (month == currentmonth && day == currentday){
