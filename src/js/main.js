@@ -484,7 +484,7 @@ document.getElementById("airquality").addEventListener("click",function() {
   // add air quality layer
   } else {
     // add air quality data to map and toggle air quality indicator and legend
-    var urlpathPollution = "https://hwp-viz.gsd.esrl.noaa.gov/wmts/image/hrrr_smoke?var=sfc_smoke&x={x}&y={y}&z={z}&time=&modelrun=&level=0";
+    var urlpathPollution = "https://hwp-viz.gsd.esrl.noaa.gov/wmts/image/hrrr_smoke?var=vi_smoke&x={x}&y={y}&z={z}&time=&modelrun=&level=0";
     pollutionLayer = L.tileLayer(urlpathPollution,{transparent: true,opacity: 0.6})
     pollutionLayer.addTo(map);
     pollution_toggle = 1;
