@@ -71,8 +71,9 @@ var map = L.map("map-leaflet", {
 
 
 // zoom map to first fire on sheets data
-var calfireDataURL = "https://extras.sfgate.com/editorial/sheetsdata/firetracker.json?";
+var calfireDataURL = "https://sfc-project-files.s3.amazonaws.com/project-feeds/fire_tracker_firedata.json";
 d3.json(calfireDataURL).then(function(blockdata){
+
   if (+blockdata[0].Zoom > 10){
     ca_offset_new = ca_offset/(+blockdata[0].Zoom-9);
   } else {
@@ -147,6 +148,7 @@ var loadSidebar = function(){
         if (cIDX == 0){
           map.setView([c.Lat,c.Lon-ca_offset], c.Zoom);
         }
+        c.Containment = c.Containment*100+"%";
         overlayString += `
           ${(cIDX === 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
 
