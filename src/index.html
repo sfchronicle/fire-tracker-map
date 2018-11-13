@@ -12,7 +12,7 @@
 <div id="map-expand"><i class="fa fa-expand"></i></div>
 
 <div id="map-overlay" class="map-overlay">
-
+  <div class="close-button"><i class="fa fa-compress" aria-hidden="true"></i></div>
   <div class="banner-logo">
     <a href="https://www.sfchronicle.com" target="_blank">
         <img src="https://projects.sfchronicle.com/shared/logos/sfc_logo_black.png"></img>
@@ -111,6 +111,11 @@
     <div id="about-noaa" class="aboutdata hide"><%=t.include("partials/_about_noaa.html") %></div>
   </div>
 </div>
+
+<script>
+  var fireDamageData = <%= JSON.stringify(json.camp_fire) %>;
+  // var pct = <%= JSON.stringify(json.PCT_allclosures) %>;
+</script>
 
 <script src="app.js" async></script>
 

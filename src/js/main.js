@@ -69,6 +69,7 @@ var map = L.map("map-leaflet", {
   attributionControl: false
 });
 
+console.log("CAMP FIRE", fireDamageData);
 
 // zoom map to first fire on sheets data
 var calfireDataURL = "https://sfc-project-files.s3.amazonaws.com/project-feeds/fire_tracker_firedata.json";
@@ -205,6 +206,19 @@ var loadSidebar = function(){
       })
       markersGroup = L.layerGroup(markerArray);
       markerArray[0].openPopup();
+
+
+      var cameraIcon = new MapIcon({iconUrl: './assets/graphics/Wineries_icon.png?'});
+      fireDamageData.features.forEach(function(item,index){
+        var latitude = item.geometry.coordinates[1];
+        var longitude = item.geometry.coordinates[0];
+        
+        html_str = `
+          <div class="fire-name">${item.properties.DAMAGE}</div>
+        `;
+        var tempmarker = L.marker([latitude, longitude], {icon: cameraIcon}).addTo(map).bindPopup(html_str);
+        markerArray[index] = tempmarker;
+      });
 
       ok();
     });

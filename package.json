@@ -29,12 +29,12 @@
     "htmlparser2": "^3.9.0",
     "less": "^2.6.1",
     "mime": "^1.2.11",
-    "resolve": "^1.1.7",
     "request": "^2.83.0",
-    "xml2js": "^0.4.19",
+    "resolve": "^1.1.7",
     "shelljs": "^0.6.0",
     "through2": "^2.0.0",
-    "typogr": "^0.6.4"
+    "typogr": "^0.6.4",
+    "xml2js": "^0.4.19"
   },
   "browser": {
     "share": "./src/js/lib/share.min.js"
