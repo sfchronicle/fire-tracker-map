@@ -2,6 +2,17 @@ body {
   pointer-events: all;
 }
 
+.close-button {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  cursor: pointer;
+
+  @media (max-width: 670px){
+    display: none;
+  }
+}
+
 .mobile-navigation {
   display: none;
   @media @mobile {
@@ -56,10 +67,7 @@ body {
   margin-bottom: 16px;
   border: 1px solid @black;
   display: none;
-  pointer: cursor;
-  -webkit-transition: all 500ms linear;
-  -ms-transition: all 500ms linear;
-  transition: all 500ms linear;
+  cursor: pointer;
   @media @phone-horiz {
     display: block;
   }
@@ -139,9 +147,17 @@ body {
   overflow-y: scroll;
   width: 40%;
   max-width: 600px;
-  -webkit-transition: all 500ms linear;
-  -ms-transition: all 500ms linear;
-  transition: all 500ms linear;
+
+  &.collapsed {
+    width: 42px;
+    height: 42px;
+    overflow: hidden;
+
+    .banner-logo {
+      visibility: hidden;
+    }
+  }
+
   @media @tablet {
     width: 50%;
     max-width: 50%;

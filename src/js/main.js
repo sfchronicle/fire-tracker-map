@@ -681,7 +681,21 @@ drawCalendarV2(month,daynumplus1,"#calendar").then(()=>calendarButtons());
 // toggle calendar
 $("#calendar-toggle").click(function() {
   $("#calendar").toggle();
-})
+});
+
+// Add click event to close button
+$(".close-button").click(function(){
+  $("#map-overlay").toggleClass("collapsed");
+
+  if ($("#map-overlay").hasClass("collapsed")){
+    $(".close-button i").addClass("fa-expand");
+    $(".close-button i").removeClass("fa-compress");
+  } else {
+    $(".close-button i").removeClass("fa-expand");
+    $(".close-button i").addClass("fa-compress");
+  }
+});
+
 
 // expand map on mobile
 var expand_toggle = 0;
