@@ -131,7 +131,6 @@ var markerArray = {};
 var markersGroup;
 
 var loadSidebar = function(){
-  console.log("loading sidebar");
 
   var overlayString=``;
 
@@ -194,7 +193,6 @@ var loadSidebar = function(){
             ${c.Injuries ? `<div class="fire-damage"><span class="fire-info-type">Injuries:</span>${c.Injuries}</div>` : ''}
             ${c.Damage ? `<div class="fire-damage"><span class="fire-info-type">Damage:</span>${c.Damage}</div>` : ''}
             <div class="fire-damage"><span class="fire-info-type">Fire began:</span>${c.StartDate}</div>
-            <div class="calendar-instructions">Click on the calendar to view fire perimeters for past months, starting with the date above.</div>
         `;
         if (c.Containment == "100%"){
           var tempmarker = L.marker([c.Lat, c.Lon], {icon: containedIcon}).addTo(map).bindPopup(html_str);
@@ -214,7 +212,6 @@ var loadSidebar = function(){
 // make sure that sidebar elements exist before putting event listeners on them
 loadSidebar().then(()=>LoadSidebarEvents());
 overlayTimer = setInterval(function() {
-  console.log("reloading the sidebar");
   loadSidebar();
 }, timer5minutes);
 
@@ -225,8 +222,6 @@ var map_timer;
 // read in fire data and create timers for re-loading it
 setTimeout(function(){
   d3.csv(fireDataURL).then(function(fire_data){
-
-    console.log("initial data load");
 
     // creating Lat/Lon objects that d3 is expecting
     fire_data.forEach(function(d,idx) {
@@ -248,8 +243,6 @@ setTimeout(function(){
 
     map_timer = setInterval(function() {
 
-      console.log("at update interval");
-
       drawMap(fire_data);
       d3.text('https://extras.sfgate.com/editorial/wildfires/noaatime.txt', function(text) {
 
@@ -268,8 +261,6 @@ setTimeout(function(){
 
 // draw map with dots on it ---------------------------------------------------------------------------------
 var drawMap = function(fire_data) {
-
-  console.log("drawing dots");
 
   d3.select("svg").selectAll("circle").remove();
   var svg = d3.select("#map-leaflet").select("svg");
@@ -320,7 +311,6 @@ var drawMap = function(fire_data) {
 // load NASA data -----------------------------------------------------------------------------------------------
 
 var now = new Date();
-console.log(now);
 var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var monthName = months[now.getMonth()];
 var month = zeroFill(now.getMonth()+1,2);
@@ -344,129 +334,6 @@ var daystyle = {"color": "#f25a14","fillOpacity": 0.2,"weight": 1,"opacity":0.4}
 var nowstyle = {"color": "#CC3400","fillOpacity": 0.7,"weight": 3};
 var calendarCount = 0;
 
-// fill in June data starting on the 23th (first day we began fire tracker)
-var LoadJune = function(){
-  console.log("loading june");
-  return new Promise(function(ok,fail){
-    if (+month >= 6){
-      for (var idx=23; idx<31; idx++) {
-        var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-06-"+zeroFill(idx,2)+".sim.json";
-        urlsList.push(nasaDataURL);
-        layerstoggle[calendarCount] = 0;
-        calendarCount++;
-      }
-      ok();
-    }
-  });
-}
-
-// add url information to data structure for months that are not current month or one month previous to current month
-var AddMonthURLs = function(monthIDX){
-  return new Promise(function(ok,fail){
-    num_days_in_month = daysInMonth(monthIDX,2018);
-    for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
-      urlsList.push(nasaDataURL);
-      layerstoggle[calendarCount] = 0;
-      calendarCount++;
-    }
-    ok();
-  });
-}
-
-// add map layer to map for months that is month previous to current month (increment through all days in month)
-var LoadFullMonth = function(monthIDX){
-  return new Promise(function(ok,fail){
-    num_days_in_month = daysInMonth(monthIDX,2018);
-    for (var dayIDX=1; dayIDX<(+daysInMonth(+monthIDX,2018)+1); dayIDX++){
-      var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
-      urlsList.push(nasaDataURL);
-      addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
-      calendarCount++;
-    }
-    ok();
-  });
-}
-
-// add map layer to map for current month (increment through current day of the month)
-var LoadCurrentMonth = function(monthIDX){
-  console.log("loading current month");
-  for (var dayIDX=1; dayIDX<(+daynum+1); dayIDX++){
-    var nasaDataURL = "https://extras.sfgate.com/editorial/wildfires/overtime/2018-"+zeroFill(monthIDX,2)+"-"+zeroFill(dayIDX,2)+".sim.json?";
-    urlsList.push(nasaDataURL);
-    addMapLayer(nasaDataURL,dayIDX,monthIDX,+daynum,+month,calendarCount);
-    calendarCount++;
-  }
-}
-
-// specify start and stop for array
-function range(start, end) {
-    if(start === end) return [start];
-    return [start, ...range(start + 1, end)];
-}
-
-// these are the months that should not be displayed automatically
-var hiddenIndices = range(6,(now.getMonth()-1));
-// these are the months that should be displayed automatically
-var showIndices = range(now.getMonth(),(now.getMonth()+1));
-
-if (hiddenIndices === 6){
-  LoadJune().then(()=>LoadFullMonth(now.getMonth())).then(()=>LoadCurrentMonth(now.getMonth()+1));
-} else {
-  var promises = [];
-  hiddenIndices.forEach(function(ind){
-    if (ind !== 6){
-      promises.push(AddMonthURLs(ind));
-    } else {
-      promises.push(LoadJune());
-    }
-  });
-  Promise.all(promises).then(()=>LoadFullMonth(now.getMonth())).then(()=>LoadCurrentMonth(now.getMonth()+1));
-}
-
-// add layer to map
-function addMapLayer(nasaDataURL,day,month,currentday,currentmonth,calendarCount){
-  if (month == currentmonth && day == currentday){
-    d3.json(nasaDataURL).then(function(nasa){
-      setTimeout(function(){
-        layers[calendarCount] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
-      },100)
-      layerstoggle[calendarCount] = 1;
-    });
-  } else {
-    d3.json(nasaDataURL).then(function(nasa){
-      layers[calendarCount] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
-      layerstoggle[calendarCount] = 1;
-    });
-  }
-}
-
-// event listener to toggle layers via calendar buttons, aka event delegation is awesome
-var calendarButtons = function(){
-  document.getElementById("calendar").addEventListener("click",function(e){
-    if (e.target && (Array.from(e.target.classList).indexOf("clickablerect") > -1)){
-      var IDX = +e.target.id.split("date")[1];
-      if (layerstoggle[IDX] == 1) {
-        map.removeLayer(layers[IDX]);
-        layerstoggle[IDX] = 0;
-        e.target.classList.remove("active");
-      } else {
-        if (IDX === (+calendarCount-1)){
-          d3.json(urlsList[IDX]).then(function(nasa){
-            layers[IDX] = L.geoJSON(nasa,{style: nowstyle}).addTo(map);
-          });
-          layerstoggle[IDX] = 1;
-        } else {
-          d3.json(urlsList[IDX]).then(function(nasa){
-            layers[IDX] = L.geoJSON(nasa,{style: daystyle}).addTo(map);
-          });
-          layerstoggle[IDX] = 1;
-        }
-        e.target.classList.add("active");
-      }
-    }
-  });
-};
 
 // air quality layer ----------------------------------------------------------------------
 var pollution_toggle = 0;
@@ -540,160 +407,22 @@ document.getElementById("close-data-box").addEventListener("click",function() {
 // functions to draw calendars ------------------------------------
 //----------------------------------------------------------------------------------
 
-var drawCalendarV2 = function(month,daynum,chartID) {
 
-  console.log("drawing calendar");
 
-  return new Promise(function(ok,fail){
-
-    // first day of tracker
-    var minDate = new Date("2018-06-01");
-    // last day of tracker
-    // number of months (+1 is because JS is weird, -5 is because we start in June)
-    if (+now.getFullYear() > 2018 || month === 12){
-      var maxDate = new Date(["2019-01-01"]);
-      var no_months = 7;
-      var maxMonth = 12;
-    } else {
-      var maxDate = new Date(["2018-"+zeroFill(+month+1,2)+"-01"]);
-      var no_months = +now.getMonth()+1-5;
-      var maxMonth = +now.getMonth()+1;
-    }
-
-    var width = 210*no_months,
-          height = 180,
-          cellSize = 25; // cell size
-
-    // we are doing a single row
-    var no_months_in_a_row = no_months;
-    // we need to shift the calendar to leave room for labels
-    var shift_down = 15;
-
-    var day = d3.timeFormat("%w"), // day of the week
-        day_of_month = d3.timeFormat("%e") // day of the month
-        day_of_year = d3.timeFormat("%j")
-        week = d3.timeFormat("%U"), // week number of the year
-        mon = d3.timeFormat("%m"), // month number
-        year = d3.timeFormat("%Y"),
-        percent = d3.format(".1%"),
-        format = d3.timeFormat("%Y-%m-%d");
-
-    var color = d3.scaleQuantize()
-        .domain([0, 10])
-        .range(d3.range(11).map(function(d) { return "q" + d + "-11"; }));
-
-    var svg = d3.select(chartID).selectAll("svg")
-          .data(d3.range(2018,2019)) //years included in the viz
-        .enter().append("svg")
-          .attr("width", width)
-          .attr("height", height)
-        .append("g")
-
-    var rect = svg.selectAll("g")
-        .data(function(d) {
-          return d3.timeDays(minDate,maxDate);
-        })
-      .enter().append("g");
-
-    rect.append("rect")
-        .attr("class", function(d){
-          if (d.getMonth() === 5 && d.getDate() < 23){
-            return "daybox nodatabox active";
-          } else if (d.getMonth() === now.getMonth() && d.getDate() === now.getDate()){
-            return "daybox nowbox clickable active clickablerect";
-          } else if (d.getMonth() === now.getMonth() && d.getDate() > now.getDate()){
-            return "daybox nodatabox active";
-          } else if (d.getMonth() === now.getMonth() || d.getMonth() === (now.getMonth()-1)){
-            return "daybox clickable active clickablerect";
-          } else {
-            return "daybox clickable clickablerect";
-          }
-        })
-        .attr("id",function(d,dIDX){
-          return "date"+(dIDX-22); // dates start on may 23
-        })
-        .attr("width", cellSize)
-        .attr("height", cellSize)
-        .attr("x", function(d) {
-          var month_padding = 1.2 * cellSize*7 * (mon(d)-6)+2;
-          return day(d) * cellSize + month_padding;
-        })
-        .attr("y", function(d) {
-          var week_diff = week(d) - week(new Date(year(d), mon(d)-1, 1) );
-          var row_level = 1;
-          return ((week_diff * cellSize)+7+shift_down);
-        })
-        .attr("rx","5")
-        .attr("ry","5")
-        .attr("fill","#F2A500")
-        .datum(format);
-
-    rect.append("text")
-        .attr("class", function(d){
-          if (d.getMonth() === 5 && d.getDate() < 23){
-            return "textclass";
-          } else if (d.getMonth() === now.getMonth() && d.getDate() === now.getDate()){
-            return "textclass clickable";
-          } else if (d.getMonth() === now.getMonth() && d.getDate() > now.getDate()){
-            return "textclass";
-          } else {
-            return "textclass clickable";
-          }
-        })
-        .text(function(d) {
-          return d.getDate();
-        })
-        .attr("x", function(d) {
-          var month_padding = 1.2 * cellSize*7 * (mon(d)-6)+2;
-          return day(d) * cellSize + month_padding+12;
-        })
-        .attr("y", function(d) {
-          var week_diff = week(d) - week(new Date(year(d), mon(d)-1, 1) )+1;
-          var row_level = 1;
-          return ((week_diff * cellSize) + shift_down);
-        })
-        .attr("text-anchor","middle");
-
-    function monthTitle (t0) {
-        return t0.toLocaleString("en-us", { month: "long" });
-      }
-    var month_titles = svg.selectAll(".month-title")  // Jan, Feb, Mar and the whatnot
-          .data(function(d) {
-            return d3.timeMonths(new Date(d, 5, 1), new Date(d, maxMonth, 1)); })
-        .enter().append("text")
-          .text(monthTitle)
-          .attr("x", function(d, i) {
-            var month_padding = 1.2 * cellSize*7* (mon(d)-6) + 40;
-            return month_padding;
-          })
-          .attr("y", 10)
-          .attr("class", "month-title")
-          .attr("text-anchor","middle")
-          .attr("d", monthTitle);
-
-    ok();
-  });
-}
-
-// draw calendar, then set event listeners on calendar days
-drawCalendarV2(month,daynumplus1,"#calendar").then(()=>calendarButtons());
-
-// toggle calendar
-$("#calendar-toggle").click(function() {
-  $("#calendar").toggle();
-});
 
 // Add click event to close button
-$(".close-button").click(function(){
+$(".expand-sidebar").click(function(){
+
   $("#map-overlay").toggleClass("collapsed");
 
   if ($("#map-overlay").hasClass("collapsed")){
-    $(".close-button i").addClass("fa-expand");
-    $(".close-button i").removeClass("fa-compress");
+    $(".expand-sidebar i").addClass("fa-expand");
+    $(".expand-sidebar i").removeClass("fa-compress");
   } else {
-    $(".close-button i").removeClass("fa-expand");
-    $(".close-button i").addClass("fa-compress");
+    $(".expand-sidebar i").removeClass("fa-expand");
+    $(".expand-sidebar i").addClass("fa-compress");
   }
+
 });
 
 
@@ -717,7 +446,7 @@ document.getElementById("map-expand").addEventListener("click",function(e){
 
 // event listener to expand sidebar fire blocks, aka event delegation is awesome
 function LoadSidebarEvents(){
-  console.log("loading sidebar events");
+
   document.getElementById("list-of-fires").addEventListener("click",function(e){
     if (e.target){
       var el = e.target;
