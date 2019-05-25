@@ -43,14 +43,14 @@ var min_zoom_deg = 3;
 
 if (screen.width <= 480){
   var ca_offset = 0;
-  var zoom_deg = 6;
-  var ca_lat = 38.589907;
-  var ca_long = -121.483433;
+  var zoom_deg = 5;
+  var ca_lat = 37.50;
+  var ca_long = -120.483433;
 } else {
   var ca_offset = 0.5;
-  var zoom_deg = 7;
-  var ca_lat = 39.530580;
-  var ca_long = -122.193457;
+  var zoom_deg = 6;
+  var ca_lat = 37.38;
+  var ca_long = -123.3114;
 }
 
 // build map ----------------------------------------------------------------------------------------------------
@@ -72,14 +72,11 @@ var map = L.map("map-leaflet", {
 
 // zoom map to first fire on sheets data
 var calfireDataURL = "https://sfc-project-files.s3.amazonaws.com/project-feeds/fire_tracker_firedata.json";
+
 d3.json(calfireDataURL).then(function(blockdata){
 
-  if (+blockdata[0].Zoom > 10){
-    ca_offset_new = ca_offset/(+blockdata[0].Zoom-9);
-  } else {
-    ca_offset_new = ca_offset;
-  }
-  map.setView([blockdata[0].Lat,(blockdata[0].Lon-ca_offset_new)],blockdata[0].Zoom);
+  ca_offset_new = ca_offset;
+  map.setView([ca_lat,ca_long],zoom_deg);
 
 });
 
@@ -117,7 +114,7 @@ var smallMapIcon = L.Icon.extend({
 });
 var MapIcon = L.Icon.extend({
     options: {
-        iconSize:     [25,25],
+        iconSize:     [17,17],
         iconAnchor:   [10,10],
     }
 });
@@ -143,10 +140,7 @@ var loadSidebar = function(){
       overlayString = ``;
 
       caldata.forEach(function(c,cIDX){
-        // center map on top fire
-        if (cIDX == 0){
-          map.setView([c.Lat,c.Lon-ca_offset], c.Zoom);
-        }
+       
         c.Containment = c.Containment*100+"%";
         overlayString += `
           ${(cIDX === 0) ? `<div class="fire-block active" id="block${cIDX}">` : `<div class="fire-block" id="block${cIDX}">`}
@@ -201,8 +195,8 @@ var loadSidebar = function(){
         }
         markerArray[cIDX] = tempmarker;
       })
-      markersGroup = L.layerGroup(markerArray);
-      markerArray[0].openPopup();
+      // markersGroup = L.layerGroup(markerArray);
+      // markerArray[0].openPopup();
 
       ok();
     });
@@ -216,123 +210,123 @@ overlayTimer = setInterval(function() {
 }, timer5minutes);
 
 // load NOAA data -----------------------------------------------------------------------------------------------
-var fireDataURL = "https://extras.sfgate.com/editorial/wildfires/noaa.csv?";
-var map_timer;
+// var fireDataURL = "https://extras.sfgate.com/editorial/wildfires/noaa.csv?";
+// var map_timer;
 
 // read in fire data and create timers for re-loading it
-setTimeout(function(){
-  d3.csv(fireDataURL).then(function(fire_data){
+// setTimeout(function(){
+//   d3.csv(fireDataURL).then(function(fire_data){
 
-    // creating Lat/Lon objects that d3 is expecting
-    fire_data.forEach(function(d,idx) {
-      d.LatLng = new L.LatLng(d.latitude,
-                  d.longitude);
-    });
+//     // creating Lat/Lon objects that d3 is expecting
+//     fire_data.forEach(function(d,idx) {
+//       d.LatLng = new L.LatLng(d.latitude,
+//                   d.longitude);
+//     });
 
-    clearTimeout(map_timer);
-    drawMap(fire_data);
-    d3.text('https://extras.sfgate.com/editorial/wildfires/noaatime.txt').then(function(text) {
+//     clearTimeout(map_timer);
+//     drawMap(fire_data);
+//     d3.text('https://extras.sfgate.com/editorial/wildfires/noaatime.txt').then(function(text) {
 
-      var d = new Date(text);
-      var e = formatDate(d,text.split(" ")[2]);
+//       var d = new Date(text);
+//       var e = formatDate(d,text.split(" ")[2]);
 
-      if (document.getElementById("updateID")) {
-        document.getElementById("updateID").innerHTML = e;
-      }
-    });
+//       if (document.getElementById("updateID")) {
+//         document.getElementById("updateID").innerHTML = e;
+//       }
+//     });
 
-    map_timer = setInterval(function() {
+//     map_timer = setInterval(function() {
 
-      drawMap(fire_data);
-      d3.text('https://extras.sfgate.com/editorial/wildfires/noaatime.txt', function(text) {
+//       drawMap(fire_data);
+//       d3.text('https://extras.sfgate.com/editorial/wildfires/noaatime.txt', function(text) {
 
-        var d = new Date(text);
-        var e = formatDate(d,text.split(" ")[2]);
+//         var d = new Date(text);
+//         var e = formatDate(d,text.split(" ")[2]);
 
-        if (document.getElementById("updateID")) {
-          document.getElementById("updateID").innerHTML = e;
-        }
-      });
+//         if (document.getElementById("updateID")) {
+//           document.getElementById("updateID").innerHTML = e;
+//         }
+//       });
 
-    }, timer5minutes);
+//     }, timer5minutes);
 
-  });
-},50);
+//   });
+// },50);
 
 // draw map with dots on it ---------------------------------------------------------------------------------
-var drawMap = function(fire_data) {
+// var drawMap = function(fire_data) {
 
-  d3.select("svg").selectAll("circle").remove();
-  var svg = d3.select("#map-leaflet").select("svg");
-  svg.attr("class","dotsSVG")
-  var g = svg.append("g");
+//   d3.select("svg").selectAll("circle").remove();
+//   var svg = d3.select("#map-leaflet").select("svg");
+//   svg.attr("class","dotsSVG")
+//   var g = svg.append("g");
 
-  var circles = g.selectAll("dotsSVG")
-    .data(fire_data)
-    .enter()
-    .append("g");
+//   var circles = g.selectAll("dotsSVG")
+//     .data(fire_data)
+//     .enter()
+//     .append("g");
 
-  // adding circles to the map
-  circles.append("circle")
-    .attr("class",function(d) {
-      return "dot fireDot";
-    })
-    .style("opacity", 0.2)
-    .style("stroke","#8C0000")
-    .style("opacity",1)
-    .style("stroke-width","1")
-    .style("fill-opacity",0.2)
-    .style("fill","#8C0000")
-    .attr("r", function(d) {
-      if (screen.width <= 480) {
-        return 5;
-      } else {
-        return 8;
-      }
-    });
+//   // adding circles to the map
+//   circles.append("circle")
+//     .attr("class",function(d) {
+//       return "dot fireDot";
+//     })
+//     .style("opacity", 0.2)
+//     .style("stroke","#8C0000")
+//     .style("opacity",1)
+//     .style("stroke-width","1")
+//     .style("fill-opacity",0.2)
+//     .style("fill","#8C0000")
+//     .attr("r", function(d) {
+//       if (screen.width <= 480) {
+//         return 5;
+//       } else {
+//         return 8;
+//       }
+//     });
 
-  // function that zooms and pans the data when the map zooms and pans
-  function update() {
-    circles.attr("transform",
-    function(d) {
-      return "translate("+
-        map.latLngToLayerPoint(d.LatLng).x +","+
-        map.latLngToLayerPoint(d.LatLng).y +")";
-      }
-    )
-  }
+//   // function that zooms and pans the data when the map zooms and pans
+//   function update() {
+//     circles.attr("transform",
+//     function(d) {
+//       return "translate("+
+//         map.latLngToLayerPoint(d.LatLng).x +","+
+//         map.latLngToLayerPoint(d.LatLng).y +")";
+//       }
+//     )
+//   }
 
-  map.on("viewreset", update);
-  map.on("zoom",update);
-  update();
-}
+//   map.on("viewreset", update);
+//   map.on("zoom",update);
+//   update();
+// }
 
 
 // load NASA data -----------------------------------------------------------------------------------------------
 
-var now = new Date();
-var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var monthName = months[now.getMonth()];
-var month = zeroFill(now.getMonth()+1,2);
-var daynum = zeroFill(now.getDate(),2);
+// var now = new Date();
+// var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+// var monthName = months[now.getMonth()];
+// var month = zeroFill(now.getMonth()+1,2);
+// var daynum = zeroFill(now.getDate(),2);
 
-var daynumplus1 = +daynum+1;
+// var daynumplus1 = +daynum+1;
 
-function zeroFill( number, width ){
-  width -= number.toString().length;
-  if ( width > 0 ){
-    return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
-  }
-  return number + ""; // always return a string
-}
+// function zeroFill( number, width ){
+//   width -= number.toString().length;
+//   if ( width > 0 ){
+//     return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
+//   }
+//   return number + ""; // always return a string
+// }
 
-var nasa_timer;
-var layers = [];
-var layerstoggle = [];
-var urlsList = [];
-var daystyle = {"color": "#f25a14","fillOpacity": 0.2,"weight": 1,"opacity":0.4};
-var nowstyle = {"color": "#CC3400","fillOpacity": 0.7,"weight": 3};
-var calendarCount = 0;
+// var nasa_timer;
+// var layers = [];
+// var layerstoggle = [];
+// var urlsList = [];
+// var daystyle = {"color": "#f25a14","fillOpacity": 0.2,"weight": 1,"opacity":0.4};
+// var nowstyle = {"color": "#CC3400","fillOpacity": 0.7,"weight": 3};
+// var calendarCount = 0;
 
 
 // air quality layer ----------------------------------------------------------------------
@@ -473,9 +467,9 @@ function LoadSidebarEvents(){
       } else {
         map.setView([blockdata[targetId].Lat,blockdata[targetId].Lon-ca_offset],9);
       }
-      if (screen.width >= 480){
+      // if (screen.width >= 480){
         markerArray[targetId].openPopup();
-      }
+      // }
     }
 
   });
