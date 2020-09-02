@@ -21,7 +21,7 @@
     "d3": "^5.5.0",
     "exorcist": "^0.4.0",
     "google-spreadsheets": "^0.5.1",
-    "googleapis": "^18.0.0",
+    "googleapis": "^39.1.0",
     "grunt": "^1.0.0",
     "grunt-contrib-connect": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
