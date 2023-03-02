@@ -19,7 +19,7 @@
     "commonmark": "^0.24.0",
     "csv": "^0.4.2",
     "d3": "^5.5.0",
-    "exorcist": "^0.4.0",
+    "exorcist": "^2.0.0",
     "google-spreadsheets": "^0.5.1",
     "googleapis": "^18.0.0",
     "grunt": "^1.0.0",
