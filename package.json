@@ -34,7 +34,7 @@
     "shelljs": "^0.6.0",
     "through2": "^2.0.0",
     "typogr": "^0.6.8",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.5.0"
   },
   "browser": {
     "share": "./src/js/lib/share.min.js"
